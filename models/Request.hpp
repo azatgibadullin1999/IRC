@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:34:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/05 14:13:26 by root             ###   ########.fr       */
+/*   Updated: 2022/01/05 16:26:05 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,11 @@
 # define __REQUEST_HPP__
 
 
+# include <iostream>
+# include <vector>
 # include "models.hpp"
+# include "Commands.hpp"
+# include "utils.hpp"
 
 
 class Request {
@@ -28,7 +32,7 @@ class Request {
 
 		static Commands				_commands;
 		std::vector<std::string>	_requestData;
-		Status						_status;
+		Commands::CommandType		_status;
 
 	public :
 
@@ -39,6 +43,8 @@ class Request {
 		bool				isMessage() const ;
 
 		bool				isComand() const ;
+
+		Commands::CommandType	whichComand() const ;
 
 		const std::vector<std::string>	&getComand() const ;
 
