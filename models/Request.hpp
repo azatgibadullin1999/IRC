@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:34:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/03 14:18:17 by root             ###   ########.fr       */
+/*   Updated: 2022/01/05 14:13:26 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,43 @@
 # define __REQUEST_HPP__
 
 
-# include <string>
+# include "models.hpp"
 
 
 class Request {
 
 	private :
 
-		std::string		_author;
-		std::string		_message;
+		enum Status {
+			MESSAGE = 0,
+			COMMAND = 1,
+		} ;
+
+		static Commands				_commands;
+		std::vector<std::string>	_requestData;
+		Status						_status;
 
 	public :
 
-		Request(const std::string &author, const std::string &message) :
-			_author(author),
-			_message(message) { }
+		Request() ;
 
-		const std::string	&getAuthor() const {
-			return _author;
-		}
+		~Request() ;
 
-		const std::string	&getMessage() const {
-			return _message;
-		}
+		bool				isMessage() const ;
+
+		bool				isComand() const ;
+
+		const std::vector<std::string>	&getComand() const ;
+
+		const std::string				&getMessage() const ;
+
+		Request		&createRequest(std::string rawRequest) ;
+
+	private :
+
+		void		__createRequestByCommand(std::string &rawRequest) ;
+
+		void		__createRequestByMessage(std::string &rawRequest) ;
 
 } ;
 
