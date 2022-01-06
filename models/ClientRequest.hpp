@@ -1,62 +1,51 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Request.hpp                                        :+:      :+:    :+:   */
+/*   ClientRequest.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:34:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/05 16:26:05 by root             ###   ########.fr       */
+/*   Updated: 2022/01/06 16:48:58 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef __REQUEST_HPP__
-# define __REQUEST_HPP__
+#ifndef __CLIENT_REQUEST_HPP__
+# define __CLIENT_REQUEST_HPP__
 
 
 # include <iostream>
 # include <vector>
-# include "models.hpp"
-# include "Commands.hpp"
-# include "utils.hpp"
+# include "../services/Commands.hpp"
 
 
-class Request {
+class ClientRequest {
 
-	private :
+	protected :
 
-		enum Status {
-			MESSAGE = 0,
-			COMMAND = 1,
-		} ;
-
-		static Commands				_commands;
-		std::vector<std::string>	_requestData;
-		Commands::CommandType		_status;
+		std::vector<std::string>		_requestData;
+		std::string						_UID;
+		Commands::ClientCommandType		_type;
 
 	public :
 
-		Request() ;
+		ClientRequest(const std::vector<std::string> &requestData, const Commands::ClientCommandType type, const std::string &UID) ;
 
-		~Request() ;
+		~ClientRequest() ;
 
 		bool				isMessage() const ;
 
 		bool				isComand() const ;
 
-		Commands::CommandType	whichComand() const ;
+		Commands::ClientCommandType		whichComand() const ;
 
-		const std::vector<std::string>	&getComand() const ;
+		const std::string				&getComand() const ;
+
+		const std::vector<std::string>	&getArguments() const ;
 
 		const std::string				&getMessage() const ;
 
-		Request		&createRequest(std::string rawRequest) ;
-
-	private :
-
-		void		__createRequestByCommand(std::string &rawRequest) ;
-
-		void		__createRequestByMessage(std::string &rawRequest) ;
+		const std::string				&getUID() const ;
 
 } ;
 
