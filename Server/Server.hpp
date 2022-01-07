@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:09:40 by zera              #+#    #+#             */
-/*   Updated: 2022/01/04 21:43:17 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/07 18:06:44 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,14 @@
 # include <unistd.h>
 # include <vector>
 # include "Sockets/ServerSocket.hpp"
-# include "ServerModels/Client.hpp"
 # include "ServerModels/ServerClient.hpp"
+// # include "ClientService.hpp"
+# include "ServerClientService.hpp"
+
+
+#ifndef FD_COPY
+# define FD_COPY(src, dest) memcpy((dest),(src),sizeof *(dest))
+#endif
 
 
 class Server
@@ -34,17 +40,22 @@ class Server
 		void		run();
 
 	private:
+		// static ClientService				_clientService;
+		static ServerClientService			_serverClientService;
+
 		std::string							_host;
 		int									_port;
-		ServerSocket*						_serverSocket;
-		std::vector<Client*>				_clients;
+		ServerSocket						_serverSocket;
 		std::vector<ServerClient*>			_serverClients;
-		fd_set								_readFds;
-		fd_set								_writeFds;
+		fd_set								_connectionFds;
+		// std::vector<int>					_connectionFds;
 		int									_fdMax;
 
+		void		setFds(fd_set *fds);
+		void		checkStatusReadFd(fd_set &readFds);
 		void		connectEvent();
-		void		readEvent(Client client);
+		void		disconnectEvent(int fd);
+		void		readEvent(int fd);
 		void		sendEvent(Client client);
 
 };
