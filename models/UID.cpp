@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 17:58:52 by root              #+#    #+#             */
-/*   Updated: 2022/01/06 19:35:31 by root             ###   ########.fr       */
+/*   Updated: 2022/01/07 17:44:37 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,16 @@ UID::UID(const std::string &uid) :
 	_userId( atoll(uid.substr(uid.find_last_of(':') + 1).c_str()) ) { }
 
 UID::~UID() { }
+
+bool			UID::operator == (const UID &other) const {
+	return 	_port == other._port
+		&& _messageId == other._messageId
+		&& _userId == other._userId;
+}
+
+bool			UID::operator == (const std::string &other) const {
+	return toString() == other;
+}
 
 std::string		UID::toString() const {
 	return std::string(ft::to_string(_port) + ":" + ft::to_string(_messageId) + ":" + ft::to_string(_userId));
