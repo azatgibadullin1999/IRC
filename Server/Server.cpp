@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/07 18:24:53 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/08 00:18:29 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 // ClientService				Server::_clientService = ClientService();
 // ServerClientService			Server::_serverClientService = ServerClientService();
+Parser						Server::_parser = Parser();
+
 
 Server::Server() :
 	_host("127.0.0.1"),
@@ -73,15 +75,23 @@ void Server::disconnectEvent(int fd) {
 }
 
 void Server::readEvent(int fd) {
-	char			_buffer[BUFFER_SIZE + 1];
-	int nDataLenght = recv(fd, _buffer, BUFFER_SIZE, 0);
+	char			buffer[BUFFER_SIZE + 1];
+	int nDataLenght = recv(fd, buffer, BUFFER_SIZE, 0);
 	if (nDataLenght < 1) {
 		disconnectEvent(fd);
 		return ;
 	}
-	_buffer[nDataLenght] = 0;
-	std::cout << "Reading: ";
-	std::cout << "\"" << _buffer << "\" "  << nDataLenght << std::endl;
+	buffer[nDataLenght] = 0;
+	// std::cout << "Reading: ";
+	// std::cout << "\"" << buffer << "\" "  << nDataLenght << std::endl;
+	UID		uid = UID(_port, 1, fd);
+	ClientRequest *clientRequest = _parser.generateClientRequest(buffer, uid);
+	if (clientRequest->isCommand())
+		std::cout << "ClientCommand " << clientRequest->getCommand() << " " << clientRequest->getArguments()[1] << std::endl;
+	else
+		std::cout << "ClientMsg " << clientRequest->getMessage() << std::endl;
+
+	// clientService.addRequest(fd, clientRequest);
 }
 
 void Server::sendEvent(Client client) {
