@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 13:01:26 by root              #+#    #+#             */
-/*   Updated: 2022/01/06 17:51:44 by root             ###   ########.fr       */
+/*   Updated: 2022/01/07 16:58:50 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,11 @@ class Parser {
 
 		~Parser() ;
 
-		ClientRequest		*generateClientRequest(std::string rawRequest, const std::string &UID) ;
+		ClientRequest		*generateClientRequest(std::string rawRequest, const UID &uid) ;
 
-		ServerRequest		*generateServerRequest(std::string rawRequest) ;
+		ServerMessage		*generateServerMessage(std::string rawRequest) ;
 
-		ServerRequest		*generateServerRequest(const ClientRequest &processedReqeust) ;
+		ServerMessage		*generateServerMessage(const ClientRequest &processedReqeust) ;
 
 	private :
 
@@ -43,7 +43,7 @@ class Parser {
 
 		void		__createClientRequestByMessage(const std::string &rawRequest, std::vector<std::string> &requestData) const ;
 
-		void		__createServerReqeustByServerRequest(const std::string &rawRequest, std::vector<std::string> &requestData) const ;
+		void		__createServerReqeustByServerMessage(const std::string &rawRequest, std::vector<std::string> &requestData) const ;
 
 		void		__createServerReqeustByClientRequest(const ClientRequest &processedReqeust, std::vector<std::string> &requestData) const ;
 

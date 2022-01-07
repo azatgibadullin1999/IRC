@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:34:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/06 16:48:58 by root             ###   ########.fr       */
+/*   Updated: 2022/01/07 17:00:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <iostream>
 # include <vector>
 # include "../services/Commands.hpp"
+# include "ServerMessage.hpp"
+# include "UID.hpp"
 
 
 class ClientRequest {
@@ -24,12 +26,14 @@ class ClientRequest {
 	protected :
 
 		std::vector<std::string>		_requestData;
-		std::string						_UID;
+		UID								_uid;
 		Commands::ClientCommandType		_type;
+		unsigned int					_numberOfWaitResponses;
+		std::vector<ServerMessage>		_responses;
 
 	public :
 
-		ClientRequest(const std::vector<std::string> &requestData, const Commands::ClientCommandType type, const std::string &UID) ;
+		ClientRequest(const std::vector<std::string> &requestData, const Commands::ClientCommandType type, const UID &uid) ;
 
 		~ClientRequest() ;
 
@@ -45,7 +49,17 @@ class ClientRequest {
 
 		const std::string				&getMessage() const ;
 
-		const std::string				&getUID() const ;
+		const UID						&getUID() const ;
+
+		void			setNumberResponses(unsigned int num) ;
+
+		unsigned int	decrementNumberResponses() ;
+
+		unsigned int	getNumberResponses() const ;
+
+		void			addResponse(const ServerMessage &resp) ;
+
+		bool			compareNumberResponse() const ;
 
 } ;
 

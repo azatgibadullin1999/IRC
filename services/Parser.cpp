@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 17:16:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/06 19:49:58 by root             ###   ########.fr       */
+/*   Updated: 2022/01/07 17:25:41 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Parser::Parser() { }
 
 Parser::~Parser() { }
 
-ClientRequest		*Parser::generateClientRequest(std::string rawRequest, const std::string &UID) {
+ClientRequest		*Parser::generateClientRequest(std::string rawRequest, const UID &uid) {
 	Commands::ClientCommandType		type;
 	std::vector<std::string>		requestData;
 	ft::strtrim(rawRequest);
@@ -30,21 +30,21 @@ ClientRequest		*Parser::generateClientRequest(std::string rawRequest, const std:
 	else
 		__createClientRequestByMessage(rawRequest, requestData);
 
-	return new ClientRequest(requestData, type, UID);
+	return new ClientRequest(requestData, type, uid);
 }
 
-ServerRequest		*Parser::generateServerRequest(std::string rawRequest) {
+ServerMessage		*Parser::generateServerMessage(std::string rawRequest) {
 	Commands::ServerCommandType		type;
 	std::vector<std::string>		requestData;
 
 	requestData.reserve(5);
-	__createServerReqeustByServerRequest(rawRequest, requestData);
-	type = static_cast<Commands::ServerCommandType>(std::atol(requestData[ServerRequest::SERVER_COMMAND].c_str()));
+	__createServerReqeustByServerMessage(rawRequest, requestData);
+	type = static_cast<Commands::ServerCommandType>(std::atol(requestData[ServerMessage::SERVER_COMMAND].c_str()));
 
-	return new ServerRequest(requestData, type);
+	return new ServerMessage(requestData, type);
 }
 
-ServerRequest		*Parser::generateServerRequest(const ClientRequest &processedReqeust) {
+ServerMessage		*Parser::generateServerMessage(const ClientRequest &processedReqeust) {
 	Commands::ServerCommandType		type;
 	std::vector<std::string>		requestData;
 
@@ -52,7 +52,7 @@ ServerRequest		*Parser::generateServerRequest(const ClientRequest &processedReqe
 	__createServerReqeustByClientRequest(processedReqeust, requestData);
 	type = Commands::REQUEST;
 
-	return new ServerRequest(requestData, type);
+	return new ServerMessage(requestData, type);
 }
 
 //	Private methods
@@ -74,7 +74,7 @@ void		Parser::__createClientRequestByMessage(const std::string &rawRequest, std:
 	requestData.push_back(rawRequest);
 }
 
-void		Parser::__createServerReqeustByServerRequest(const std::string &rawRequest, std::vector<std::string> &requestData) const {
+void		Parser::__createServerReqeustByServerMessage(const std::string &rawRequest, std::vector<std::string> &requestData) const {
 	std::string::const_iterator		it2 = rawRequest.begin();
 	std::string::const_iterator		it1;
 
@@ -107,5 +107,5 @@ void		Parser::__createServerReqeustByClientRequest(const ClientRequest &processe
 			tmpClientRequest += *it + " ";
 	}
 	requestData.push_back(tmpClientRequest);
-	requestData.push_back(processedReqeust.getUID());
+	requestData.push_back(processedReqeust.getUID().toString());
 }

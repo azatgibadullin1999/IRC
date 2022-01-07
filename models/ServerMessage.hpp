@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ServerRequest.hpp                                  :+:      :+:    :+:   */
+/*   ServerMessage.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:36:13 by root              #+#    #+#             */
-/*   Updated: 2022/01/07 14:16:15 by root             ###   ########.fr       */
+/*   Updated: 2022/01/07 17:23:25 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,10 @@
 # include <string>
 # include <exception>
 # include "../services/Commands.hpp"
+# include "UID.hpp"
 
 
-class ServerRequest {
+class ServerMessage {
 
 	private:
 
@@ -35,6 +36,7 @@ class ServerRequest {
 		*/
 
 		std::vector<std::string>		_requestData;
+		UID								_uid;
 		Commands::ServerCommandType		_type;
 
 	public:
@@ -44,12 +46,12 @@ class ServerRequest {
 			PASSWORD,
 			SERVER_COMMAND,
 			CLIENT_ARGS,
-			UID,
+			STR_UID,
 		} ;
 
-		ServerRequest(const std::vector<std::string> &requestData, const Commands::ServerCommandType type) ;
+		ServerMessage(const std::vector<std::string> &requestData, const Commands::ServerCommandType type) ;
 
-		~ServerRequest() ;
+		~ServerMessage() ;
 
 		const std::string		&getPassword() const ;
 
@@ -57,7 +59,9 @@ class ServerRequest {
 
 		const std::string		&getClientArgs() const ;
 
-		const std::string		&getUID() const ;
+		const UID				&getUID() const ;
+
+		const std::string		&getStringUID() const ;
 
 		class FewArguments : public std::exception {
 			const char		*what() const throw() {
