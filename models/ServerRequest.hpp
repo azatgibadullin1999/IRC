@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:36:13 by root              #+#    #+#             */
-/*   Updated: 2022/01/06 19:49:36 by root             ###   ########.fr       */
+/*   Updated: 2022/01/07 14:16:15 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 # include <vector>
 # include <string>
+# include <exception>
 # include "../services/Commands.hpp"
 
 
@@ -57,6 +58,16 @@ class ServerRequest {
 		const std::string		&getClientArgs() const ;
 
 		const std::string		&getUID() const ;
+
+		class FewArguments : public std::exception {
+			const char		*what() const throw() {
+				return "Server Request don't have any arguments";
+			}
+		} ;
+
+	private :
+
+		void		__checkArguments(ArgumentNumber n) const ;
 
 } ;
 
