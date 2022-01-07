@@ -1,19 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.hpp                                          :+:      :+:    :+:   */
+/*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/04 22:19:02 by root              #+#    #+#             */
-/*   Updated: 2022/01/05 14:25:54 by root             ###   ########.fr       */
+/*   Created: 2022/01/03 12:34:29 by root              #+#    #+#             */
+/*   Updated: 2022/01/06 16:51:06 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-namespace ft {
+#ifndef __RESPONSE_HPP__
+# define __RESPONSE_HPP__
 
-std::string		&strltrim(std::string &str);
-std::string		&strrtrim(std::string &str);
-std::string		&strtrim(std::string &str);
- 
-}
+
+# include <iostream>
+
+
+class Response {
+
+	public :
+
+		Response() ;
+
+		~Response() ;
+
+
+} ;
+
+
+#endif

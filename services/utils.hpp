@@ -1,50 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Commands.hpp                                       :+:      :+:    :+:   */
+/*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/04 18:32:23 by root              #+#    #+#             */
-/*   Updated: 2022/01/05 16:17:56 by root             ###   ########.fr       */
+/*   Created: 2022/01/04 22:19:02 by root              #+#    #+#             */
+/*   Updated: 2022/01/06 15:05:49 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef	__COMMANDS_HPP__
-# define __COMMANDS_HPP__
+#ifndef __UTILS_HPP__
+# define __UTILS_HPP__
 
 
 # include <iostream>
-# include <vector>
+# include <string>
 
 
-struct		Commands {
+namespace ft {
 
-	private :
-	
-		std::vector<std::string>		_commands;
-	
-	public :
+std::string		&strltrim(std::string &str) ;
+std::string		&strrtrim(std::string &str) ;
+std::string		&strtrim(std::string &str) ;
+std::string		to_string(unsigned long value) ;
 
-	enum CommandType {
-		MESSAGE	= 0,
-		NICK	= 1,
-		JOIN	= 2,
-		LEAVE	= 3,
-		QUIT	= 4,
-		WHO		= 5,
-		PRIVMSG = 6,
-		LIST	= 7,
-		HELP	= 8,
-	} ;
-
-	Commands() ;
-
-	~Commands() ;
-
-	CommandType		isCommand(const std::string &str) ;
-
-} ;
+}
 
 
 #endif
