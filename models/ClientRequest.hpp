@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:34:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/07 17:00:34 by root             ###   ########.fr       */
+/*   Updated: 2022/01/07 21:12:08 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,11 @@ class ClientRequest {
 
 		bool				isMessage() const ;
 
-		bool				isComand() const ;
+		bool				isCommand() const ;
 
-		Commands::ClientCommandType		whichComand() const ;
+		Commands::ClientCommandType		whichCommand() const ;
 
-		const std::string				&getComand() const ;
+		const std::string				&getCommand() const ;
 
 		const std::vector<std::string>	&getArguments() const ;
 
@@ -53,13 +53,7 @@ class ClientRequest {
 
 		void			setNumberResponses(unsigned int num) ;
 
-		unsigned int	decrementNumberResponses() ;
-
-		unsigned int	getNumberResponses() const ;
-
-		void			addResponse(const ServerMessage &resp) ;
-
-		bool			compareNumberResponse() const ;
+		unsigned int	addResponse(const ServerMessage &resp) ;
 
 } ;
 
