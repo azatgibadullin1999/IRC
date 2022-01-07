@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 17:58:52 by root              #+#    #+#             */
-/*   Updated: 2022/01/07 17:44:37 by root             ###   ########.fr       */
+/*   Updated: 2022/01/07 20:23:31 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,14 @@ bool			UID::operator == (const UID &other) const {
 
 bool			UID::operator == (const std::string &other) const {
 	return toString() == other;
+}
+
+bool			UID::operator != (const UID &other) const {
+	return !(*this == other);
+}
+
+bool			UID::operator != (const std::string &other) const {
+	return !(*this == other);
 }
 
 std::string		UID::toString() const {

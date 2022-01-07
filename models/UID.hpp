@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 17:52:49 by root              #+#    #+#             */
-/*   Updated: 2022/01/07 17:44:45 by root             ###   ########.fr       */
+/*   Updated: 2022/01/07 20:22:51 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,10 @@ class UID {
 		bool			operator == (const UID &other) const ;
 
 		bool			operator == (const std::string &other) const ;
+
+		bool			operator != (const UID &other) const ;
+
+		bool			operator != (const std::string &other) const ;
 
 		std::string		toString() const ;
 

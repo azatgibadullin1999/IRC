@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 22:07:48 by root              #+#    #+#             */
-/*   Updated: 2022/01/07 19:37:21 by root             ###   ########.fr       */
+/*   Updated: 2022/01/07 21:25:30 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,18 @@ ClientRequest::ClientRequest(const std::vector<std::string> &requestData, const 
 ClientRequest::~ClientRequest() { }
 
 bool				ClientRequest::isMessage() const {
+	return !_type;
+}
+
+bool				ClientRequest::isCommand() const {
 	return _type;
 }
 
-bool				ClientRequest::isComand() const {
+Commands::ClientCommandType		ClientRequest::whichCommand() const {
 	return _type;
 }
 
-Commands::ClientCommandType		ClientRequest::whichComand() const {
-	return _type;
-}
-
-const std::string				&ClientRequest::getComand() const {
+const std::string				&ClientRequest::getCommand() const {
 	return _requestData[0];
 }
 
@@ -38,7 +38,7 @@ const std::vector<std::string>	&ClientRequest::getArguments() const {
 }
 
 const std::string				&ClientRequest::getMessage() const {
-	return _requestData[0];
+	return _requestData[1];
 }
 
 const UID						&ClientRequest::getUID() const {
@@ -49,18 +49,8 @@ void			ClientRequest::setNumberResponses(unsigned int num) {
 	_numberOfWaitResponses = num;
 }
 
-unsigned int	ClientRequest::decrementNumberResponses() {
-	return --_numberOfWaitResponses;
-}
-
-unsigned int	ClientRequest::getNumberResponses() const {
-	return _numberOfWaitResponses;
-}
-
-void			ClientRequest::addResponse(const ServerMessage &resp) {
+unsigned int	ClientRequest::addResponse(const ServerMessage &resp) {
 	_responses.push_back(resp);
+	return !--_numberOfWaitResponses;
 }
 
-bool			ClientRequest::compareNumberResponse() const {
-	return _responses.size() == _numberOfWaitResponses;
-}
