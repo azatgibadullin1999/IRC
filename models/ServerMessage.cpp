@@ -6,42 +6,57 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:40:47 by root              #+#    #+#             */
-/*   Updated: 2022/01/07 17:24:52 by root             ###   ########.fr       */
+/*   Updated: 2022/01/08 20:11:55 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "ServerMessage.hpp"
 
-ServerMessage::ServerMessage(const std::vector<std::string> &requestData, const Commands::ServerCommandType type) :
-	_requestData(requestData), _uid(getStringUID()), _type(type) { }
+ServerMessage::ServerMessage(
+	const std::string &password,
+	const Commands::ServerCommandType &serverCommandType,
+	const Commands::ClientCommandType &clientCommandType,
+	const std::vector<std::string> &clientArgs,
+	const std::string &uid) :
+		_password(password),
+		_serverCommandType(serverCommandType),
+		_clientCommandType(clientCommandType),
+		_clientArgs(clientArgs),
+		_uid(uid) { }
 
 ServerMessage::~ServerMessage() { }
 
 const std::string		&ServerMessage::getPassword() const {
-	__checkArguments(PASSWORD);
-	return _requestData[PASSWORD];
+	return _password;
 }
 
-const std::string		&ServerMessage::getServerCommand() const {
-	__checkArguments(SERVER_COMMAND);
-	return _requestData[SERVER_COMMAND];
+const Commands::ServerCommandType		&ServerMessage::getServerCommand() const {
+	return _serverCommandType;
 }
 
-const std::string		&ServerMessage::getClientArgs() const {
-	__checkArguments(CLIENT_ARGS);
-	return _requestData[CLIENT_ARGS];
+const Commands::ClientCommandType		&ServerMessage::getClientCommand() const {
+	return _clientCommandType;
 }
 
-const std::string		&ServerMessage::getStringUID() const {
-	__checkArguments(CLIENT_ARGS);
-	return _requestData[STR_UID];
+const std::vector<std::string>			&ServerMessage::getClientArgs() const {
+	return _clientArgs;
 }
 
 const UID				&ServerMessage::getUID() const {
 	return _uid;
 }
 
-void		ServerMessage::__checkArguments(ArgumentNumber n) const {
-	if (_requestData.size() <= n)
-		throw FewArguments();
+const std::string		ServerMessage::toString() const {
+	std::string		dst;
+
+	dst += "SERVER " + _password + " " + ft::to_string(_serverCommandType) + " " + ft::to_string(_clientCommandType) + " " + "[";
+	
+	std::vector<std::string>::const_iterator	it = _clientArgs.begin();
+	
+	for (; it != _clientArgs.end(); it++)
+		dst += *it + " ";
+	
+	dst += "] " + _uid.toString();
+	
+	return dst;
 }
