@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:36:13 by root              #+#    #+#             */
-/*   Updated: 2022/01/08 15:49:41 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/08 20:01:10 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,11 @@ class ServerMessage {
 		SERVER password REQUEST [ 1 Azat ] UID
 		*/
 
-		std::vector<std::string>		_requestData;
+		std::string						_password;
+		Commands::ServerCommandType		_serverCommandType;
+		Commands::ClientCommandType		_clientCommandType;
+		std::vector<std::string>		_clientArgs;
 		UID								_uid;
-		Commands::ServerCommandType		_type;
-		unsigned int					_waitingResponses;
 
 	public:
 
@@ -51,7 +52,11 @@ class ServerMessage {
 			STR_UID,
 		} ;
 
-		ServerMessage(const std::vector<std::string> &requestData, const Commands::ServerCommandType type) ;
+		ServerMessage(const std::string &password,
+					const Commands::ServerCommandType &serverCommandType,
+					const Commands::ClientCommandType &clientCommandType,
+					const std::vector<std::string> &clientArgs,
+					const std::string &uid) ;
 
 		~ServerMessage() ;
 
@@ -63,30 +68,21 @@ class ServerMessage {
 
 		const std::string					&getClientArgs() const ;
 
-		const UID							&getUID() const ;
+		const Commands::ServerCommandType		&getServerCommand() const ;
 
-		const std::string					&getStringUID() const ;
+		const Commands::ClientCommandType		&getClientCommand() const ;
+
+		const std::vector<std::string>			&getClientArgs() const ;
 
 		std::vector<ServerMessage*>			&getResponses() ;
 
-		void								setUID(UID uid) ;
-
-		void								setWaitingResponses(int waitingResponses) ;
-
-		bool								addResponse(ServerMessage *response) ;
+		const std::string		toString() const ; 
 
 		class FewArguments : public std::exception {
 			const char		*what() const throw() {
 				return "Server Request don't have any arguments";
 			}
 		} ;
-
-	private :
-
-		void		__checkArguments(ArgumentNumber n) const ;
-
-		std::vector<ServerMessage*>		_responses;
-
 } ;
 
 

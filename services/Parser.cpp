@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 17:16:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/07 17:25:41 by root             ###   ########.fr       */
+/*   Updated: 2022/01/08 19:15:21 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,40 +24,47 @@ ClientRequest		*Parser::generateClientRequest(std::string rawRequest, const UID 
 	ft::strtrim(rawRequest);
 	
 	type = _commands.isCommand(rawRequest);
-	requestData.insert(requestData.begin(), ft::to_string(type));
 	if (type)
-		__createClientRequestByCommand(std::string(rawRequest, rawRequest.find(' ')), requestData);
+		__createClientRequest(std::string(rawRequest, rawRequest.find(' ')), requestData);
 	else
-		__createClientRequestByMessage(rawRequest, requestData);
+		__createClientRequest(rawRequest, requestData);
 
 	return new ClientRequest(requestData, type, uid);
 }
 
-ServerMessage		*Parser::generateServerMessage(std::string rawRequest) {
-	Commands::ServerCommandType		type;
+ServerMessage		*Parser::generateServerMessage(const std::string &rawRequest) {
+	std::string						password;
+	Commands::ServerCommandType		serverCommandType;
+	Commands::ClientCommandType		clientCommandType;
 	std::vector<std::string>		requestData;
+	std::string						uid;
 
-	requestData.reserve(5);
-	__createServerReqeustByServerMessage(rawRequest, requestData);
-	type = static_cast<Commands::ServerCommandType>(std::atol(requestData[ServerMessage::SERVER_COMMAND].c_str()));
+	__createServerReqeustByServerMessage(
+		rawRequest,
+		password,
+		serverCommandType,
+		clientCommandType,
+		requestData,
+		uid);
 
-	return new ServerMessage(requestData, type);
+	return new ServerMessage(password, serverCommandType, clientCommandType, requestData, uid);
 }
 
-ServerMessage		*Parser::generateServerMessage(const ClientRequest &processedReqeust) {
-	Commands::ServerCommandType		type;
+ServerMessage		*Parser::generateServerMessage(const ClientRequest &processedReqeust, const std::string &password) {
+	Commands::ServerCommandType		serverCommandType;
+	Commands::ClientCommandType		clientCommandType;
 	std::vector<std::string>		requestData;
 
-	requestData.reserve(5);
-	__createServerReqeustByClientRequest(processedReqeust, requestData);
-	type = Commands::REQUEST;
+	__createServerReqeustByClientRequest(processedReqeust, serverCommandType, clientCommandType, requestData);
 
-	return new ServerMessage(requestData, type);
+	return new ServerMessage(password, serverCommandType, processedReqeust.whichCommand(), requestData, processedReqeust.getUID().toString());
 }
+
 
 //	Private methods
 
-void		Parser::__createClientRequestByCommand(const std::string &rawRequest, std::vector<std::string> &requestData) const {
+
+void		Parser::__createClientRequest(const std::string &rawRequest, std::vector<std::string> &requestData) const {
 	std::string::const_iterator		it2 = rawRequest.begin();
 	std::string::const_iterator		it1;
 
@@ -70,42 +77,57 @@ void		Parser::__createClientRequestByCommand(const std::string &rawRequest, std:
 	}
 }
 
-void		Parser::__createClientRequestByMessage(const std::string &rawRequest, std::vector<std::string> &requestData) const {
-	requestData.push_back(rawRequest);
-}
+// void		Parser::__createClientRequestByMessage(const std::string &rawRequest, std::vector<std::string> &requestData) const {
+// 	requestData.push_back(rawRequest);
+// }
 
-void		Parser::__createServerReqeustByServerMessage(const std::string &rawRequest, std::vector<std::string> &requestData) const {
-	std::string::const_iterator		it2 = rawRequest.begin();
-	std::string::const_iterator		it1;
+void		Parser::__createServerReqeustByServerMessage(const std::string &rawRequest,
+						std::string &password,
+						Commands::ServerCommandType &serverCommandType,
+						Commands::ClientCommandType &clientCommandType,
+						std::vector<std::string> &requestData,
+						std::string &uid) const {
+	size_t		posBegin;
+	size_t		posEnd;
 
-	while (it2 < rawRequest.end()) {
-		it1 = it2;
-		if (*it2 == '[') {
-			std::string::const_iterator		ittmp = it2;
-			for (;ittmp < rawRequest.end(); ittmp++) {
-				if (*ittmp == ']')
-					it2 = ++ittmp;
-			}
-		}
-		else
-			for(; isprint(*it2) && !isspace(*it2) && it2 < rawRequest.end(); ++it2) { }
-		requestData.push_back(std::string(it1, it2));
-		for(; (!isprint(*it2) || isspace(*it2)) && it2 < rawRequest.end(); ++it2) { }
+	posBegin = rawRequest.find(' ') + 1;
+	posEnd = rawRequest.find(' ', posBegin);
+	password.insert(0, &rawRequest[posBegin], posEnd - posBegin);
+
+	posBegin = posEnd + 1;
+	posEnd = rawRequest.find(' ', posBegin);
+	serverCommandType = static_cast<Commands::ServerCommandType>(atoll(&rawRequest[posBegin]));
+
+	posBegin = posEnd + 1;
+	posEnd = rawRequest.find(' ', posBegin);
+	clientCommandType = static_cast<Commands::ClientCommandType>(atoll(&rawRequest[posBegin]));
+
+	posBegin = rawRequest.find_first_of('[') + 1;
+	if ((posEnd = rawRequest.find_last_of(']')) == std::string::npos)
+		posEnd = rawRequest.size();
+	for (size_t bufpos = posBegin; bufpos < posEnd;) {
+		posBegin = bufpos;
+		while (isprint(rawRequest[bufpos])
+				&& !isspace(rawRequest[bufpos])
+				&& bufpos < posEnd) { ++bufpos; }
+
+		requestData.push_back(std::string(&rawRequest[posBegin], bufpos - posBegin));
+
+		while ((!isprint(rawRequest[bufpos])
+				|| isspace(rawRequest[bufpos]))
+				&& bufpos < posEnd) { ++bufpos; }
 	}
+
+	posBegin = posEnd + 2;
+	uid.insert(0, &rawRequest[posBegin], rawRequest.size() - posBegin);
 }
 		
-void		Parser::__createServerReqeustByClientRequest(const ClientRequest &processedReqeust, std::vector<std::string> &requestData) const {
-	requestData.push_back("SERVER");
-	requestData.push_back(/* password */"XxX__PaSsWoRd__XxX");
-	requestData.push_back(ft::to_string(Commands::REQUEST) + " ");
-	std::string		tmpClientRequest;
-	tmpClientRequest += "[";
-	for (std::vector<std::string>::const_iterator it = processedReqeust.getArguments().begin(); it < processedReqeust.getArguments().end(); it++) {
-		if (it == processedReqeust.getArguments().end() - 1)
-			tmpClientRequest += *it + "]";
-		else
-			tmpClientRequest += *it + " ";
-	}
-	requestData.push_back(tmpClientRequest);
-	requestData.push_back(processedReqeust.getUID().toString());
+void		Parser::__createServerReqeustByClientRequest(
+				const ClientRequest &processedReqeust,
+				Commands::ServerCommandType &serverCommandType,
+				Commands::ClientCommandType &clientCommandType,
+				std::vector<std::string> &requestData) const {
+	serverCommandType = Commands::REQUEST;
+	clientCommandType = processedReqeust.whichCommand();
+	requestData = processedReqeust.getArguments();
 }
