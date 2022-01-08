@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerMessage.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:36:13 by root              #+#    #+#             */
-/*   Updated: 2022/01/08 20:01:10 by root             ###   ########.fr       */
+/*   Updated: 2022/01/08 20:39:33 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,7 @@ class ServerMessage {
 
 		~ServerMessage() ;
 
-		const Commands::ServerCommandType	&getType() const ;
-
 		const std::string					&getPassword() const ;
-
-		const std::string					&getServerCommand() const ;
-
-		const std::string					&getClientArgs() const ;
 
 		const Commands::ServerCommandType		&getServerCommand() const ;
 
@@ -74,9 +68,9 @@ class ServerMessage {
 
 		const std::vector<std::string>			&getClientArgs() const ;
 
-		std::vector<ServerMessage*>			&getResponses() ;
+		const UID							&getUID() const ;
 
-		const std::string		toString() const ; 
+		const std::string					toString() const ; 
 
 		class FewArguments : public std::exception {
 			const char		*what() const throw() {
