@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:36:13 by root              #+#    #+#             */
-/*   Updated: 2022/01/08 20:39:33 by root             ###   ########.fr       */
+/*   Updated: 2022/01/08 20:42:27 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ class ServerMessage {
 	private:
 
 		/*
-
 		SERVER password CONNECT RESPONSE
 		SERVER password CONNECT REQUEST
 
