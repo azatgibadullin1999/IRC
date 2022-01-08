@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:09:40 by zera              #+#    #+#             */
-/*   Updated: 2022/01/07 18:06:44 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/07 20:48:47 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 # define __SERVER_HPP__
 
 # define BUFFER_SIZE 256
+
+#ifndef FD_COPY
+# define FD_COPY(src, dest) memcpy((dest),(src),sizeof *(dest))
+#endif
+
 
 # include <stdio.h>
 # include <sys/time.h>
@@ -25,11 +30,8 @@
 # include "ServerModels/ServerClient.hpp"
 // # include "ClientService.hpp"
 # include "ServerClientService.hpp"
-
-
-#ifndef FD_COPY
-# define FD_COPY(src, dest) memcpy((dest),(src),sizeof *(dest))
-#endif
+# include "../services/Parser.hpp"
+# include "../models/models.hpp"
 
 
 class Server
@@ -42,6 +44,7 @@ class Server
 	private:
 		// static ClientService				_clientService;
 		static ServerClientService			_serverClientService;
+		static Parser						_parser;
 
 		std::string							_host;
 		int									_port;

@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   ServerMessage.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:40:47 by root              #+#    #+#             */
 /*   Updated: 2022/01/08 20:11:55 by root             ###   ########.fr       */
@@ -42,7 +42,7 @@ const std::vector<std::string>			&ServerMessage::getClientArgs() const {
 	return _clientArgs;
 }
 
-const UID				&ServerMessage::getUID() const {
+const UID							&ServerMessage::getUID() const {
 	return _uid;
 }
 
