@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerMessage.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:36:13 by root              #+#    #+#             */
-/*   Updated: 2022/01/07 17:23:25 by root             ###   ########.fr       */
+/*   Updated: 2022/01/08 15:49:41 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ class ServerMessage {
 	private:
 
 		/*
+
 		SERVER password CONNECT RESPONSE
 		SERVER password CONNECT REQUEST
 
@@ -38,6 +39,7 @@ class ServerMessage {
 		std::vector<std::string>		_requestData;
 		UID								_uid;
 		Commands::ServerCommandType		_type;
+		unsigned int					_waitingResponses;
 
 	public:
 
@@ -53,15 +55,25 @@ class ServerMessage {
 
 		~ServerMessage() ;
 
-		const std::string		&getPassword() const ;
+		const Commands::ServerCommandType	&getType() const ;
 
-		const std::string		&getServerCommand() const ;
+		const std::string					&getPassword() const ;
 
-		const std::string		&getClientArgs() const ;
+		const std::string					&getServerCommand() const ;
 
-		const UID				&getUID() const ;
+		const std::string					&getClientArgs() const ;
 
-		const std::string		&getStringUID() const ;
+		const UID							&getUID() const ;
+
+		const std::string					&getStringUID() const ;
+
+		std::vector<ServerMessage*>			&getResponses() ;
+
+		void								setUID(UID uid) ;
+
+		void								setWaitingResponses(int waitingResponses) ;
+
+		bool								addResponse(ServerMessage *response) ;
 
 		class FewArguments : public std::exception {
 			const char		*what() const throw() {
@@ -72,6 +84,8 @@ class ServerMessage {
 	private :
 
 		void		__checkArguments(ArgumentNumber n) const ;
+
+		std::vector<ServerMessage*>		_responses;
 
 } ;
 
