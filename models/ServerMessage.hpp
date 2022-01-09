@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:36:13 by root              #+#    #+#             */
-/*   Updated: 2022/01/08 20:42:27 by root             ###   ########.fr       */
+/*   Updated: 2022/01/08 21:30:50 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,10 @@ class ServerMessage {
 		std::vector<std::string>		_clientArgs;
 		UID								_uid;
 
+		unsigned int					_numberOfWaitResponses;
+		std::vector<ServerMessage *>	_response;
+
+
 	public:
 
 		enum ArgumentNumber {
@@ -69,7 +73,11 @@ class ServerMessage {
 
 		const UID							&getUID() const ;
 
-		const std::string					toString() const ; 
+		const std::string					toString() const ;
+
+		void		setNumberOfWaitResponses(unsigned int num) ;
+
+		bool		addResponse(ServerMessage *response) ;
 
 		class FewArguments : public std::exception {
 			const char		*what() const throw() {

@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:34:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/07 21:12:08 by root             ###   ########.fr       */
+/*   Updated: 2022/01/09 14:01:49 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ class ClientRequest {
 		std::vector<std::string>		_requestData;
 		UID								_uid;
 		Commands::ClientCommandType		_type;
-		unsigned int					_numberOfWaitResponses;
-		std::vector<ServerMessage>		_responses;
 
 	public :
 
@@ -41,19 +39,13 @@ class ClientRequest {
 
 		bool				isCommand() const ;
 
-		Commands::ClientCommandType		whichCommand() const ;
-
-		const std::string				&getCommand() const ;
+		Commands::ClientCommandType		getCommand() const ;
 
 		const std::vector<std::string>	&getArguments() const ;
 
-		const std::string				&getMessage() const ;
+		std::string						getMessage() const ;
 
 		const UID						&getUID() const ;
-
-		void			setNumberResponses(unsigned int num) ;
-
-		unsigned int	addResponse(const ServerMessage &resp) ;
 
 } ;
 
