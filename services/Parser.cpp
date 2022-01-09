@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 17:16:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/08 19:15:21 by root             ###   ########.fr       */
+/*   Updated: 2022/01/09 14:05:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ ServerMessage		*Parser::generateServerMessage(const ClientRequest &processedReqe
 
 	__createServerReqeustByClientRequest(processedReqeust, serverCommandType, clientCommandType, requestData);
 
-	return new ServerMessage(password, serverCommandType, processedReqeust.whichCommand(), requestData, processedReqeust.getUID().toString());
+	return new ServerMessage(password, serverCommandType, processedReqeust.getCommand(), requestData, processedReqeust.getUID().toString());
 }
 
 
@@ -128,6 +128,6 @@ void		Parser::__createServerReqeustByClientRequest(
 				Commands::ClientCommandType &clientCommandType,
 				std::vector<std::string> &requestData) const {
 	serverCommandType = Commands::REQUEST;
-	clientCommandType = processedReqeust.whichCommand();
+	clientCommandType = processedReqeust.getCommand();
 	requestData = processedReqeust.getArguments();
 }

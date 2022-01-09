@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 22:07:48 by root              #+#    #+#             */
-/*   Updated: 2022/01/07 21:25:30 by root             ###   ########.fr       */
+/*   Updated: 2022/01/09 14:04:57 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,32 +25,24 @@ bool				ClientRequest::isCommand() const {
 	return _type;
 }
 
-Commands::ClientCommandType		ClientRequest::whichCommand() const {
+Commands::ClientCommandType		ClientRequest::getCommand()const {
 	return _type;
-}
-
-const std::string				&ClientRequest::getCommand() const {
-	return _requestData[0];
 }
 
 const std::vector<std::string>	&ClientRequest::getArguments() const {
 	return _requestData;
 }
 
-const std::string				&ClientRequest::getMessage() const {
-	return _requestData[1];
+std::string						ClientRequest::getMessage() const {
+	std::string		dst;
+	std::vector<std::string>::const_iterator		it = _requestData.begin();
+
+	for (; it < _requestData.end(); it++)
+		dst += *it + " ";
+
+	return dst;
 }
 
 const UID						&ClientRequest::getUID() const {
 	return _uid;
 }
-
-void			ClientRequest::setNumberResponses(unsigned int num) {
-	_numberOfWaitResponses = num;
-}
-
-unsigned int	ClientRequest::addResponse(const ServerMessage &resp) {
-	_responses.push_back(resp);
-	return !--_numberOfWaitResponses;
-}
-

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerMessage.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:40:47 by root              #+#    #+#             */
-/*   Updated: 2022/01/08 20:11:55 by root             ###   ########.fr       */
+/*   Updated: 2022/01/08 20:51:42 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,15 @@ const std::vector<std::string>			&ServerMessage::getClientArgs() const {
 
 const UID							&ServerMessage::getUID() const {
 	return _uid;
+}
+
+void		ServerMessage::setNumberOfWaitResponses(unsigned int num) {
+	_numberOfWaitResponses = num;
+}
+
+bool		ServerMessage::addResponse(ServerMessage *response) {
+	_response.push_back(response);
+	return !--_numberOfWaitResponses;
 }
 
 const std::string		ServerMessage::toString() const {
