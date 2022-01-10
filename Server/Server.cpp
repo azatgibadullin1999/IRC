@@ -18,9 +18,9 @@ Parser						Server::_parser = Parser();
 
 
 Server::Server() :
-	_host("127.0.0.1"),
+	_host(""),
 	_port(11112),
-	_serverSocket(ServerSocket(_host.c_str(), _port)) {}
+	_serverSocket(ServerSocket(_host, "11112")) {}
 
 void	Server::run () {
 	std::cout << "Starting..." << _serverSocket.getSocket() << std::endl;
