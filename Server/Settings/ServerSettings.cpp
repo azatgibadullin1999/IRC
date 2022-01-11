@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 11:41:00 by zera              #+#    #+#             */
-/*   Updated: 2022/01/11 19:53:31 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/11 20:47:57 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,13 @@ ServerSettings::ServerSettings(const std::string connection, const std::string p
 }
 
 void			ServerSettings::_parseConnection(const std::string & connection) {
+	 int count = 0;
+	for (int i = 0; (i = connection.find(':', i)) != std::string::npos; i++) {
+		count++;
+	}
+	if (count != 2) {
+		throw (ServerSettingsException("Connection must have 3 args separated by ':'"));
+	}
 	if (*connection.begin() != '[')
 		throw (ServerSettingsException("Connection must begin with ["));
 	if (*(--connection.end()) != ']')
