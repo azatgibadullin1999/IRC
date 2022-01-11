@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:09:40 by zera              #+#    #+#             */
-/*   Updated: 2022/01/07 20:48:47 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/11 20:06:34 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <vector>
 # include "Sockets/ServerSocket.hpp"
 # include "ServerModels/ServerClient.hpp"
+# include "Settings/ServerSettings.hpp"
 // # include "ClientService.hpp"
 # include "ServerClientService.hpp"
 # include "../services/Parser.hpp"
@@ -37,8 +38,10 @@
 class Server
 {
 	public:
-		Server(void);
-		~Server(void) {}
+		Server(ServerSettings * settings);
+		~Server(void) {
+			delete(_serverSettings);
+		}
 		void		run();
 
 	private:
@@ -46,8 +49,7 @@ class Server
 		static ServerClientService			_serverClientService;
 		static Parser						_parser;
 
-		std::string							_host;
-		int									_port;
+		ServerSettings						*_serverSettings;
 		ServerSocket						_serverSocket;
 		std::vector<ServerClient*>			_serverClients;
 		fd_set								_connectionFds;
