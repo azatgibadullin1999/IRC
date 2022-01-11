@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/08 00:18:29 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/11 20:05:33 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,25 +17,24 @@
 Parser						Server::_parser = Parser();
 
 
-Server::Server() :
-	_host(""),
-	_port(11112),
-	_serverSocket(ServerSocket(_host, "11112")) {}
+Server::Server(ServerSettings * settings) :
+	_serverSocket(ServerSocket(settings->getPort())) {}
 
 void	Server::run () {
 	std::cout << "Starting..." << _serverSocket.getSocket() << std::endl;
 	fd_set readFds;
 	fd_set writeFds;
 	_fdMax = _serverSocket.getSocket();
+	FD_ZERO(&_connectionFds);
 	while (true)
 	{
 		FD_ZERO(&readFds);
 		FD_ZERO(&writeFds);
 		FD_COPY(&_connectionFds, &readFds);
 		FD_SET(_serverSocket.getSocket(), &readFds);
-		FD_COPY(&_connectionFds, &writeFds);
+		// FD_COPY(&_connectionFds, &writeFds);
 		std::cout << "select" << std::endl;
-		if (select(_fdMax + 1, &readFds, NULL, NULL, NULL) == -1) {
+		if (select(_fdMax + 1, &readFds, &writeFds, NULL, NULL) == -1) {
 			perror("select");
 			_exit(4);
 		}
@@ -84,7 +83,7 @@ void Server::readEvent(int fd) {
 	buffer[nDataLenght] = 0;
 	// std::cout << "Reading: ";
 	// std::cout << "\"" << buffer << "\" "  << nDataLenght << std::endl;
-	UID		uid = UID(_port, 1, fd);
+	UID		uid = UID(/*_serverSettings->getPort()*/8080, 1, fd);
 	ClientRequest *clientRequest = _parser.generateClientRequest(buffer, uid);
 	if (clientRequest->isCommand())
 		std::cout << "ClientCommand " << clientRequest->getCommand() << " " << clientRequest->getArguments()[1] << std::endl;

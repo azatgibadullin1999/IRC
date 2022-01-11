@@ -6,6 +6,7 @@
 class ServerSocket : public SocketBase {
 	private:
 	public:
+		ServerSocket(const std::string &port) throw(SocketException);
 		ServerSocket(const std::string &domain, const std::string &port) throw(SocketException);
 		virtual ~ServerSocket();
 

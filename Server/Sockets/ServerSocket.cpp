@@ -1,5 +1,13 @@
 #include "ServerSocket.hpp"
 
+ServerSocket::ServerSocket(const std::string &port)
+	throw(SocketException) : SocketBase("", port) {
+	std::cout << "Connecting" << std::endl;
+	connect();
+	std::cout << "Listening" << std::endl;
+	startListening();
+}
+
 ServerSocket::ServerSocket(const std::string &domain, const std::string &port)
 	throw(SocketException) : SocketBase(domain, port) {
 	std::cout << "Connecting" << std::endl;

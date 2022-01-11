@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 11:41:00 by zera              #+#    #+#             */
-/*   Updated: 2022/01/11 01:06:00 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/11 19:53:31 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,9 @@ ServerSettings::ServerSettings(const std::string connection, const std::string p
 	_parseConnection(connection);
 	_port = port;
 	_password = password;
-
-	std::cout << "Host \"" << _hostConnection << "\"\nPort \"" << _portConnection << "\"\nPassword \"" << _passwordConnection <<
-		"\"\n-------------\nPort \"" << _port << "\"\nPassword \"" << _password << "\"" << std::endl;
 }
 
 void			ServerSettings::_parseConnection(const std::string & connection) {
-	// std::cout << connection << std::endl;
 	if (*connection.begin() != '[')
 		throw (ServerSettingsException("Connection must begin with ["));
 	if (*(--connection.end()) != ']')

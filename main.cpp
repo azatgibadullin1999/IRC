@@ -21,7 +21,6 @@ ServerSettings *settings;
 		exit(-1);
 	}
 
-	Server server = Server();
-
+	Server server = Server(settings);
 	server.run();
 }

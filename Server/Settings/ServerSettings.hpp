@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/08 19:56:19 by zera              #+#    #+#             */
-/*   Updated: 2022/01/10 23:18:49 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/11 19:50:30 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,6 @@ class ServerSettingsException : public std::exception {
 class ServerSettings {
 	
 	private :
-	
-	// ./ircserv [host:port_network:password_network] <port> <password>
 
 		std::string		_port;
 
@@ -75,7 +73,7 @@ class ServerSettings {
 		ServerSettings(const std::string connection, const std::string port,
 						 const std::string password) throw(ServerSettingsException) ;
 
-		~ServerSettings() ;
+		~ServerSettings() { }
 
 } ;
 
