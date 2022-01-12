@@ -6,19 +6,27 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/11 20:05:33 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/13 00:04:56 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
 // ClientService				Server::_clientService = ClientService();
-// ServerClientService			Server::_serverClientService = ServerClientService();
+ServerClientService			Server::_serverClientService = ServerClientService();
 Parser						Server::_parser = Parser();
+ConnectionsService			Server::_connectionsService = ConnectionsService();
 
 
 Server::Server(ServerSettings * settings) :
-	_serverSocket(ServerSocket(settings->getPort())) {}
+	_serverSocket(ServerSocket(settings->getPort())) {
+		if (settings->haveConnection()){
+			int socketConnection = _connectionsService.addConnection(settings->getHostConnection(), settings->getPortConnection());
+			_serverClientService.addServerClient(socketConnection);
+			_serverClientService.addRequest(socketConnection,
+				new ServerMessage(settings->getPasswordConnection(), Commands::REQUEST_CONNECT, settings->getPassword()));
+		}
+	}
 
 void	Server::run () {
 	std::cout << "Starting..." << _serverSocket.getSocket() << std::endl;
@@ -58,6 +66,7 @@ void Server::checkStatusReadFd(fd_set &readFds) {
 void Server::connectEvent() {
 	try {
 		int		socket = _serverSocket.accept();
+		_connectionsService.addConnection(socket);
 		// _clientService.addClient(socket);
 		FD_SET(socket, &_connectionFds);
 		_fdMax = std::max(_fdMax, socket);
@@ -83,6 +92,14 @@ void Server::readEvent(int fd) {
 	buffer[nDataLenght] = 0;
 	// std::cout << "Reading: ";
 	// std::cout << "\"" << buffer << "\" "  << nDataLenght << std::endl;
+/*
+	1. Добавить в коннектион
+	2. Проверить всё ли
+	3. Проверяем от кого коннектион
+	4. None -> Смотрим на сообщение если Коннектион сервис подтвердит коннект то адд сервер если ток пароль не правильный то ноне останется если что-то другое то пользователь
+	5. Client -> В клиент парсерРк
+
+*/
 	UID		uid = UID(/*_serverSettings->getPort()*/8080, 1, fd);
 	ClientRequest *clientRequest = _parser.generateClientRequest(buffer, uid);
 	if (clientRequest->isCommand())
@@ -93,7 +110,7 @@ void Server::readEvent(int fd) {
 	// clientService.addRequest(fd, clientRequest);
 }
 
-void Server::sendEvent(Client client) {
+void Server::sendEvent(int sock) {
 	// for (std::vector<Client*>::iterator i = _clients.begin(); i < _clients.end(); i++)
 	// {
 	// 	if ((*i)->getSocket() != client.getSocket())

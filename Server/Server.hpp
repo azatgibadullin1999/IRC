@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:09:40 by zera              #+#    #+#             */
-/*   Updated: 2022/01/11 20:06:34 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/12 19:27:05 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@
 # include <unistd.h>
 # include <vector>
 # include "Sockets/ServerSocket.hpp"
-# include "ServerModels/ServerClient.hpp"
 # include "Settings/ServerSettings.hpp"
 // # include "ClientService.hpp"
 # include "ServerClientService.hpp"
+# include "ConnectionsService.hpp"
 # include "../services/Parser.hpp"
 # include "../models/models.hpp"
 
@@ -46,6 +46,7 @@ class Server
 
 	private:
 		// static ClientService				_clientService;
+		static ConnectionsService			_connectionsService;
 		static ServerClientService			_serverClientService;
 		static Parser						_parser;
 
@@ -61,7 +62,7 @@ class Server
 		void		connectEvent();
 		void		disconnectEvent(int fd);
 		void		readEvent(int fd);
-		void		sendEvent(Client client);
+		void		sendEvent(int sock);
 
 };
 
