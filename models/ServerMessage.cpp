@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:40:47 by root              #+#    #+#             */
-/*   Updated: 2022/01/08 20:51:42 by root             ###   ########.fr       */
+/*   Updated: 2022/01/12 13:17:05 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,18 @@ ServerMessage::ServerMessage(
 		_clientCommandType(clientCommandType),
 		_clientArgs(clientArgs),
 		_uid(uid) { }
+
+ServerMessage::ServerMessage(
+	const std::string &passwordToConnect,
+	const Commands::ServerCommandType &command,
+	const std::string &ourPassword) :
+		_password(passwordToConnect),
+		_serverCommandType(command),
+		_clientCommandType(Commands::MESSAGE),
+		_clientArgs(),
+		_uid("0:14:88") { 
+			_clientArgs.push_back(ourPassword);
+		}
 
 ServerMessage::~ServerMessage() { }
 
@@ -44,6 +56,12 @@ const std::vector<std::string>			&ServerMessage::getClientArgs() const {
 
 const UID							&ServerMessage::getUID() const {
 	return _uid;
+}
+
+bool		ServerMessage::isServerConnectCommand() const {
+	if (_serverCommandType > 1)
+		return true ;
+	return false ;
 }
 
 void		ServerMessage::setNumberOfWaitResponses(unsigned int num) {

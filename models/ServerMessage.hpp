@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:36:13 by root              #+#    #+#             */
-/*   Updated: 2022/01/08 21:30:50 by root             ###   ########.fr       */
+/*   Updated: 2022/01/12 13:17:55 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,10 @@ class ServerMessage {
 					const Commands::ClientCommandType &clientCommandType,
 					const std::vector<std::string> &clientArgs,
 					const std::string &uid) ;
+		
+		ServerMessage(const std::string &passwordToConnect,
+					const Commands::ServerCommandType &command,
+					const std::string &ourPassword) ;
 
 		~ServerMessage() ;
 
@@ -72,6 +76,8 @@ class ServerMessage {
 		const std::vector<std::string>			&getClientArgs() const ;
 
 		const UID							&getUID() const ;
+
+		bool		isServerConnectCommand() const ;
 
 		const std::string					toString() const ;
 

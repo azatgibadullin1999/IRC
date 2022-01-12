@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 18:32:23 by root              #+#    #+#             */
-/*   Updated: 2022/01/08 13:43:16 by root             ###   ########.fr       */
+/*   Updated: 2022/01/11 16:33:22 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,19 @@ struct		Commands {
 	
 	public :
 
+	enum Status {
+		SUCCESS,
+		FAIL,
+	} ;
+
 	enum ClientCommandType {
 		MESSAGE,
+		PRIVMSG,
 		NICK,
 		JOIN,
-		PRIVMSG,
 		LEAVE,
 		QUIT,
-		WHO	,
+		WHO,
 		LIST,
 		HELP,
 	} ;
@@ -41,6 +46,8 @@ struct		Commands {
 	enum ServerCommandType {
 		REQUEST,
 		RESPONSE,
+		REQUEST_CONNECT,
+		RESPONSE_CONNECT,
 	} ;
 
 	Commands() ;

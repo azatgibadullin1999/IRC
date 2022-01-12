@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 22:21:00 by root              #+#    #+#             */
-/*   Updated: 2022/01/08 13:43:40 by root             ###   ########.fr       */
+/*   Updated: 2022/01/10 13:37:35 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 Commands::Commands() {
 	_commands.reserve(8);
+	_commands.push_back("PRIVMSG ");
 	_commands.push_back("NICK ");
 	_commands.push_back("JOIN ");
-	_commands.push_back("PRIVMSG ");
 	_commands.push_back("LEAVE ");
 	_commands.push_back("QUIT ");
 	_commands.push_back("WHO ");
