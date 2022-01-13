@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:34:29 by root              #+#    #+#             */
-/*   Updated: 2022/01/10 19:21:07 by root             ###   ########.fr       */
+/*   Updated: 2022/01/12 14:56:40 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,18 +27,22 @@ class Response {
 		std::vector<std::string>		_requestData;
 		UID								_uid;
 		Commands::Status				_status;
+		Commands::ClientCommandType		_clientCommand;
 
 	public :
 
 		Response(const std::vector<std::string> &requestData,
 				const UID &uid,
-				const Commands::Status &status) ;
+				const Commands::Status &status,
+				const Commands::ClientCommandType &clientCommand) ;
 
 		~Response() ;
 
 		const UID		&getUID() const ;
 
 		Commands::Status	getCommandStatus() const ;
+
+		Commands::ClientCommandType	getClientCommand() const ;
 
 		const std::vector<std::string>	&getArguments() const ;
 
