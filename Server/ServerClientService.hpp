@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 10:22:23 by zera              #+#    #+#             */
-/*   Updated: 2022/01/12 23:54:53 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/14 15:56:19 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@
 class ServerClientService
 {
 	public:
-		ServerClientService(void);
-		~ServerClientService(void);
+		ServerClientService(void) { }
+		~ServerClientService(void) { }
 
 		void	addServerClient(int socket);
 

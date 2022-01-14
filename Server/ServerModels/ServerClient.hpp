@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:19:48 by zera              #+#    #+#             */
-/*   Updated: 2022/01/12 18:05:43 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/14 15:56:07 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class ServerClient
 		ServerClient(int socket) {
 			_socket = socket;
 		}
-		~ServerClient(void);
+		~ServerClient(void) { }
 
 		int								getSocket() { return _socket; }
 
