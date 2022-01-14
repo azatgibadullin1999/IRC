@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 14:05:54 by zera              #+#    #+#             */
-/*   Updated: 2022/01/12 19:14:40 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/14 13:27:56 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 
 # include <string>
+# include <unistd.h>
 
 
 class Connection
@@ -30,7 +31,10 @@ class Connection
 			_socket = socket;
 			_type = NONE;
 		}
-		~Connection(void);
+
+		~Connection(void) {
+			close(_socket);
+		}
 
 		int					getSocket() { return _socket; }
 		ConnectionType		getType() { return _type; }

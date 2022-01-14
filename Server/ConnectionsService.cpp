@@ -6,24 +6,37 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 16:48:16 by zera              #+#    #+#             */
-/*   Updated: 2022/01/12 22:29:14 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/14 15:04:47 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "ConnectionsService.hpp"
 
-std::string					ConnectionsService::addRequest(int socket, std::string rq) {
+ConnectionsService::~ConnectionsService(void) {
 	for (std::vector<Connection*>::iterator connection = _connections.begin();
 		 connection < _connections.end(); connection++) {
-		if ((*connection)->getSocket() == socket) {
-			std::string rawRq = (*connection)->getRawRq() + rq;
-			if (rawRq.find('\n') != std::string::npos) {
-				(*connection)->setRawRq(rawRq);
-				return ("");
-			} else {
-				(*connection)->setRawRq("");
-				return rawRq;
-			}
+		delete(*connection);
+	}
+	_connections.clear();
+}
+
+void						ConnectionsService::setFds(fd_set &readFds) {
+	for (std::vector<Connection*>::iterator connection = _connections.begin();
+		 connection < _connections.end(); connection++) {
+		FD_SET((*connection)->getSocket(), &readFds);
+	}
+}
+
+std::string					ConnectionsService::addRequest(int socket, std::string rq) {
+	Connection*		connection = _getConnection(socket);
+	if (connection) {
+		std::string rawRq = connection->getRawRq() + rq;
+		if (rawRq.find('\n') == std::string::npos) {
+			connection->setRawRq(rawRq);
+			return ("");
+		} else {
+			connection->setRawRq("");
+			return rawRq;
 		}
 	}
 	return ("");
@@ -55,5 +68,34 @@ int							ConnectionsService::addConnection(std::string host, int port) {
 }
 
 Connection::ConnectionType	ConnectionsService::getTypeConnection(int socket) {
-	return Connection::SERVER;
+	Connection*		connection = _getConnection(socket);
+	if (connection) {
+		connection->getType();
+	}
+	return Connection::NONE;
+}
+
+void						ConnectionsService::disconnect(int socket) {
+	for (std::vector<Connection*>::iterator connection = _connections.begin();
+		 connection < _connections.end(); connection++) {
+		if ((*connection)->getSocket() == socket) {
+			_connections.erase(connection);
+			return ;
+		}
+	}
+}
+
+void						ConnectionsService::setTypeConnection(int socket, Connection::ConnectionType type) {
+	_getConnection(socket)->setType(type);
+}
+
+
+Connection*					ConnectionsService::_getConnection(int socket) {
+	for (std::vector<Connection*>::iterator connection = _connections.begin();
+		 connection < _connections.end(); connection++) {
+		if ((*connection)->getSocket() == socket) {
+			return (*connection);
+		}
+	}
+	return (NULL);
 }

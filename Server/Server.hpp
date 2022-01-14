@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:09:40 by zera              #+#    #+#             */
-/*   Updated: 2022/01/12 19:27:05 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/14 13:52:54 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,13 @@ class Server
 		ServerSettings						*_serverSettings;
 		ServerSocket						_serverSocket;
 		std::vector<ServerClient*>			_serverClients;
-		fd_set								_connectionFds;
+		fd_set								_readFds;
+		fd_set								_writeFds;
 		// std::vector<int>					_connectionFds;
 		int									_fdMax;
 
-		void		setFds(fd_set *fds);
-		void		checkStatusReadFd(fd_set &readFds);
+		void		setFds(fd_set &readFds, fd_set &writeFds);
+		void		checkStatusReadFd(fd_set &readFds, fd_set &writeFds);
 		void		connectEvent();
 		void		disconnectEvent(int fd);
 		void		readEvent(int fd);
