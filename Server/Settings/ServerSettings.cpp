@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 11:41:00 by zera              #+#    #+#             */
-/*   Updated: 2022/01/11 20:47:57 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/14 15:50:19 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,5 @@ int				ServerSettings::getPortConnection() const {
 }
 
 std::string		ServerSettings::getPasswordConnection() const {
-	return _password;
+	return _passwordConnection;
 }
