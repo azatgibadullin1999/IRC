@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 18:32:23 by root              #+#    #+#             */
-/*   Updated: 2022/01/14 18:36:24 by root             ###   ########.fr       */
+/*   Updated: 2022/01/15 18:55:41 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,38 +27,38 @@ struct		Commands {
 	
 	public :
 
-	enum Status {
-		SUCCESS,
-		FAIL,
-		ERROR,
-	} ;
+		enum Status {
+			SUCCESS,
+			FAIL,
+			ERROR,
+		} ;
 
-	enum ClientCommandType {
-		MESSAGE,
-		PRIVMSG,
-		NICK,
-		JOIN,
-		LEAVE,
-		QUIT,
-		WHO,
-		LIST,
-		HELP,
-	} ;
+		enum ClientCommandType {
+			MESSAGE,
+			PRIVMSG,
+			NICK,
+			JOIN,
+			LEAVE,
+			QUIT,
+			WHO,
+			LIST,
+			HELP,
+		} ;
 
-	enum ServerCommandType {
-		REQUEST,
-		RESPONSE,
-		REQUEST_CONNECT,
-		RESPONSE_CONNECT,
-	} ;
+		enum ServerCommandType {
+			REQUEST,
+			RESPONSE,
+			REQUEST_CONNECT,
+			RESPONSE_CONNECT,
+		} ;
 
-	Commands() ;
+		Commands() ;
 
-	~Commands() ;
+		~Commands() ;
 
-	ClientCommandType		whichClientCommand(const std::string &str) const ;
+		ClientCommandType		whichClientCommand(const std::string &str) const ;
 
-	bool					isServerCommand(const std::string &str) const ;
+		bool					isServerCommand(const std::string &str) const ;
 
 } ;
 

@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 13:01:26 by root              #+#    #+#             */
-/*   Updated: 2022/01/14 16:38:08 by root             ###   ########.fr       */
+/*   Updated: 2022/01/15 18:55:57 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,6 @@ class Parser {
 		void		__createClientRequest(
 						const std::string &rawRequest,
 						std::vector<std::string> &requestData) const ;
-
-		// void		__createClientRequestByMessage(
-		// 				const std::string &rawRequest,
-		// 				std::vector<std::string> &requestData) const ;
 
 		void		__createServerReqeustByServerMessage(
 						const std::string &rawRequest,
