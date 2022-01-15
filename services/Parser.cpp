@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 17:16:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/15 12:25:09 by root             ###   ########.fr       */
+/*   Updated: 2022/01/15 18:55:05 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@ ClientRequest		*Parser::generateClientRequest(std::string rawRequest, const UID 
 	}
 	else
 		__createClientRequest(rawRequest, requestData);
-
-	// std::cout << requestData.size() << std::endl;
 
 	return new ClientRequest(requestData, type, uid);
 }
@@ -69,7 +67,10 @@ bool				Parser::isServerMessage(const std::string &rawRequest) {
 	return _commands.isServerCommand(rawRequest);
 }
 
-//	Private methods
+
+	//
+	//	Private methods
+	//
 
 
 void		Parser::__createClientRequest(const std::string &rawRequest, std::vector<std::string> &requestData) const {
@@ -85,10 +86,6 @@ void		Parser::__createClientRequest(const std::string &rawRequest, std::vector<s
 		for(; (!isprint(*it2) || isspace(*it2)) && it2 < rawRequest.end(); ++it2) { }
 	}
 }
-
-// void		Parser::__createClientRequestByMessage(const std::string &rawRequest, std::vector<std::string> &requestData) const {
-// 	requestData.push_back(rawRequest);
-// }
 
 void		Parser::__createServerReqeustByServerMessage(const std::string &rawRequest,
 						std::string &password,
