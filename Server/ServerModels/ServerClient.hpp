@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:19:48 by zera              #+#    #+#             */
-/*   Updated: 2022/01/08 11:53:15 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/12 18:05:43 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,21 +16,20 @@
 
 
 # include <vector>
-# include "Client.hpp"
 # include "../../models/ServerMessage.hpp"
 
 
 class ServerClient
 {
 	public:
-		ServerClient(Client client) {
-			_socket = client.getSocket();
+		ServerClient(int socket) {
+			_socket = socket;
 		}
 		~ServerClient(void);
 
-		int								getSocket() { return: _socket; }
+		int								getSocket() { return _socket; }
 
-		std::vector<ServerMessage*>&	getRequests() { return: _requests; }
+		std::vector<ServerMessage*>&	getRequests() { return _requests; }
 
 	private:
 		int							_socket;
