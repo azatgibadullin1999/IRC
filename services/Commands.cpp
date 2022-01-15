@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 22:21:00 by root              #+#    #+#             */
-/*   Updated: 2022/01/15 12:07:54 by root             ###   ########.fr       */
+/*   Updated: 2022/01/15 19:25:11 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@ Commands::Commands() {
 	_clientCommands.push_back("WHO");
 	_clientCommands.push_back("LIST");
 	_clientCommands.push_back("HELP");
+
+	_clientCommands.push_back("REGISTR");
+	_clientCommands.push_back("LOGIN");
 
 	_serverCommands.push_back("SERVER ");
 }
