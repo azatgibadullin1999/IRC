@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 17:16:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/09 14:05:34 by root             ###   ########.fr       */
+/*   Updated: 2022/01/15 18:55:05 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,14 @@ Parser::~Parser() { }
 ClientRequest		*Parser::generateClientRequest(std::string rawRequest, const UID &uid) {
 	Commands::ClientCommandType		type;
 	std::vector<std::string>		requestData;
-	ft::strtrim(rawRequest);
+	ft::strltrim(rawRequest);
 	
-	type = _commands.isCommand(rawRequest);
-	if (type)
-		__createClientRequest(std::string(rawRequest, rawRequest.find(' ')), requestData);
+	type = _commands.whichClientCommand(rawRequest);
+	if (type) {
+		size_t	spacePos = rawRequest.find(' ');
+		if (spacePos != rawRequest.npos)
+			__createClientRequest(std::string(rawRequest, spacePos), requestData);
+	}
 	else
 		__createClientRequest(rawRequest, requestData);
 
@@ -60,13 +63,20 @@ ServerMessage		*Parser::generateServerMessage(const ClientRequest &processedReqe
 	return new ServerMessage(password, serverCommandType, processedReqeust.getCommand(), requestData, processedReqeust.getUID().toString());
 }
 
+bool				Parser::isServerMessage(const std::string &rawRequest) {
+	return _commands.isServerCommand(rawRequest);
+}
 
-//	Private methods
+
+	//
+	//	Private methods
+	//
 
 
 void		Parser::__createClientRequest(const std::string &rawRequest, std::vector<std::string> &requestData) const {
 	std::string::const_iterator		it2 = rawRequest.begin();
 	std::string::const_iterator		it1;
+
 
 	for(; (!isprint(*it2) || isspace(*it2)) && it2 < rawRequest.end(); ++it2) { }
 	while (it2 < rawRequest.end()) {
@@ -76,10 +86,6 @@ void		Parser::__createClientRequest(const std::string &rawRequest, std::vector<s
 		for(; (!isprint(*it2) || isspace(*it2)) && it2 < rawRequest.end(); ++it2) { }
 	}
 }
-
-// void		Parser::__createClientRequestByMessage(const std::string &rawRequest, std::vector<std::string> &requestData) const {
-// 	requestData.push_back(rawRequest);
-// }
 
 void		Parser::__createServerReqeustByServerMessage(const std::string &rawRequest,
 						std::string &password,

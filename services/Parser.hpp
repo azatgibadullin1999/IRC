@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 13:01:26 by root              #+#    #+#             */
-/*   Updated: 2022/01/08 19:14:36 by root             ###   ########.fr       */
+/*   Updated: 2022/01/15 18:55:57 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,15 +37,13 @@ class Parser {
 
 		ServerMessage		*generateServerMessage(const std::string &rawRequest) ;
 
+		bool				isServerMessage(const std::string &rawRequest);
+
 	private :
 
 		void		__createClientRequest(
 						const std::string &rawRequest,
 						std::vector<std::string> &requestData) const ;
-
-		// void		__createClientRequestByMessage(
-		// 				const std::string &rawRequest,
-		// 				std::vector<std::string> &requestData) const ;
 
 		void		__createServerReqeustByServerMessage(
 						const std::string &rawRequest,

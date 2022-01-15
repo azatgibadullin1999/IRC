@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 18:32:23 by root              #+#    #+#             */
-/*   Updated: 2022/01/11 16:33:22 by root             ###   ########.fr       */
+/*   Updated: 2022/01/15 18:55:41 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,39 +22,43 @@ struct		Commands {
 
 	private :
 	
-		std::vector<std::string>		_commands;
+		std::vector<std::string>		_clientCommands;
+		std::vector<std::string>		_serverCommands;
 	
 	public :
 
-	enum Status {
-		SUCCESS,
-		FAIL,
-	} ;
+		enum Status {
+			SUCCESS,
+			FAIL,
+			ERROR,
+		} ;
 
-	enum ClientCommandType {
-		MESSAGE,
-		PRIVMSG,
-		NICK,
-		JOIN,
-		LEAVE,
-		QUIT,
-		WHO,
-		LIST,
-		HELP,
-	} ;
+		enum ClientCommandType {
+			MESSAGE,
+			PRIVMSG,
+			NICK,
+			JOIN,
+			LEAVE,
+			QUIT,
+			WHO,
+			LIST,
+			HELP,
+		} ;
 
-	enum ServerCommandType {
-		REQUEST,
-		RESPONSE,
-		REQUEST_CONNECT,
-		RESPONSE_CONNECT,
-	} ;
+		enum ServerCommandType {
+			REQUEST,
+			RESPONSE,
+			REQUEST_CONNECT,
+			RESPONSE_CONNECT,
+		} ;
 
-	Commands() ;
+		Commands() ;
 
-	~Commands() ;
+		~Commands() ;
 
-	ClientCommandType		isCommand(const std::string &str) const ;
+		ClientCommandType		whichClientCommand(const std::string &str) const ;
+
+		bool					isServerCommand(const std::string &str) const ;
 
 } ;
 
