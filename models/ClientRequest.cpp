@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 22:07:48 by root              #+#    #+#             */
-/*   Updated: 2022/01/09 14:04:57 by root             ###   ########.fr       */
+/*   Updated: 2022/01/14 20:19:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,13 @@ std::string						ClientRequest::getMessage() const {
 
 const UID						&ClientRequest::getUID() const {
 	return _uid;
+}
+
+void		ClientRequest::setChannelAndNick(const std::string &channel, const std::string &nick) {
+	_requestData.insert(_requestData.begin(), nick);
+	_requestData.insert(_requestData.begin(), channel);
+}
+
+void		ClientRequest::setNick(const std::string &nick) {
+	_requestData.insert(_requestData.begin(), nick);
 }

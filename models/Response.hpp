@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:34:29 by root              #+#    #+#             */
-/*   Updated: 2022/01/12 14:56:40 by root             ###   ########.fr       */
+/*   Updated: 2022/01/15 17:38:28 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,14 @@ class Response {
 		Commands::ClientCommandType	getClientCommand() const ;
 
 		const std::vector<std::string>	&getArguments() const ;
+		
+		std::string		toString() const ;
+
+		std::string		toList() const ;
+
+		std::string		toMessage() const ;
+
+		std::string		toPrivateMessage() const ;
 
 } ;
 
