@@ -6,33 +6,48 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 22:21:00 by root              #+#    #+#             */
-/*   Updated: 2022/01/10 13:37:35 by root             ###   ########.fr       */
+/*   Updated: 2022/01/15 12:07:54 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "Commands.hpp"
 
 Commands::Commands() {
-	_commands.reserve(8);
-	_commands.push_back("PRIVMSG ");
-	_commands.push_back("NICK ");
-	_commands.push_back("JOIN ");
-	_commands.push_back("LEAVE ");
-	_commands.push_back("QUIT ");
-	_commands.push_back("WHO ");
-	_commands.push_back("LIST ");
-	_commands.push_back("HELP ");
+	_clientCommands.reserve(8);
+	_clientCommands.push_back("PRIVMSG");
+	_clientCommands.push_back("NICK");
+	_clientCommands.push_back("JOIN");
+	_clientCommands.push_back("LEAVE");
+	_clientCommands.push_back("QUIT");
+	_clientCommands.push_back("WHO");
+	_clientCommands.push_back("LIST");
+	_clientCommands.push_back("HELP");
+
+	_serverCommands.push_back("SERVER ");
 }
 
 Commands::~Commands() { }
 
-Commands::ClientCommandType		Commands::isCommand(const std::string &str) const {
-	std::vector<std::string>::const_iterator it = _commands.begin();
+Commands::ClientCommandType		Commands::whichClientCommand(const std::string &str) const {
+	std::vector<std::string>::const_iterator it = _clientCommands.begin();
 	
-	for (; it != _commands.end(); it++) {
-		if (!it->compare(0, it->size(), str, 0, it->size()))
-			return ClientCommandType((it.base() - _commands.begin().base()) + 1);
+	for (; it != _clientCommands.end(); it++) {
+		if (it->size() <= str.size()
+			&& !it->compare(0, it->size(), str, 0, it->size())
+			&& (str[it->size()] == '\0' || str[it->size()] == ' '))
+			return ClientCommandType((it.base() - _clientCommands.begin().base()) + 1);
 	}
 
 	return MESSAGE;
+}
+
+bool	Commands::isServerCommand(const std::string &str) const {
+	std::vector<std::string>::const_iterator it = _serverCommands.begin();
+	
+	for (; it != _serverCommands.end(); it++) {
+		if (!it->compare(0, it->size(), str, 0, it->size()))
+			return true;
+	}
+
+	return false ;
 }
