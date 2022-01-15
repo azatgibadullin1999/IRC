@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 13:01:26 by root              #+#    #+#             */
-/*   Updated: 2022/01/08 19:14:36 by root             ###   ########.fr       */
+/*   Updated: 2022/01/14 16:38:08 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ class Parser {
 		ServerMessage		*generateServerMessage(const ClientRequest &processedReqeust, const std::string &password) ;
 
 		ServerMessage		*generateServerMessage(const std::string &rawRequest) ;
+
+		bool				isServerMessage(const std::string &rawRequest);
 
 	private :
 
