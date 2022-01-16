@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 14:41:03 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/16 15:28:11 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ ConnectionsService			Server::_connectionsService = ConnectionsService();
 
 Server::Server(ServerSettings * settings) :
 	_serverSettings(settings),
-	_serverSocket(ServerSocket(_serverSettings->getPort())) {
+	_serverSocket(ServerSocket(_serverSettings->getPort())),
+	_fdMax(0) {
 		if (_serverSettings->haveConnection()){
 			int socketConnection = _connectionsService.addConnection(_serverSettings->getHostConnection(), _serverSettings->getPortConnection());
 			_serverClientService.addServerClient(socketConnection);
