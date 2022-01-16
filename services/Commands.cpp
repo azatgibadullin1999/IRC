@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 22:21:00 by root              #+#    #+#             */
-/*   Updated: 2022/01/15 19:25:11 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 14:49:47 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ Commands::ClientCommandType		Commands::whichClientCommand(const std::string &str
 	for (; it != _clientCommands.end(); it++) {
 		if (it->size() <= str.size()
 			&& !it->compare(0, it->size(), str, 0, it->size())
-			&& (str[it->size()] == '\0' || str[it->size()] == ' '))
+			&& (str[it->size()] == '\n' || str[it->size()] == ' '))
 			return ClientCommandType((it.base() - _clientCommands.begin().base()) + 1);
 	}
 
