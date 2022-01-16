@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:16:51 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 13:37:30 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 20:18:51 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,17 @@ class ClientService
 
 			public :
 					//	execute to client
-				void	message(std::vector<Client> &clients, const Response &response, std::vector<int> &retSockets) ;
-				void	privateMessage(std::vector<Client> &clients, const Response &response, std::vector<int> &retSockets) ;
-				void	nickName(std::vector<Client> &clients, const Response &response, std::vector<int> &retSockets) ;
-				void	join(std::vector<Client> &clients, const Response &response, std::vector<int> &retSockets) ;
-				void	leave(std::vector<Client> &clients, const Response &response, std::vector<int> &retSockets) ;
-				void	quit(std::vector<Client> &clients, const Response &response, std::vector<int> &retSockets) ;
-				void	who(std::vector<Client> &clients, const Response &response, std::vector<int> &retSockets) ;
-				void	list(std::vector<Client> &clients, const Response &response, std::vector<int> &retSockets) ;
-				void	help(std::vector<Client> &clients, const Response &response, std::vector<int> &retSockets) ;
+				void	message(std::vector<Client> &clients, const Response &response) ;
+				void	privateMessage(std::vector<Client> &clients, const Response &response) ;
+				void	nickName(std::vector<Client> &clients, const Response &response) ;
+				void	join(std::vector<Client> &clients, const Response &response) ;
+				void	leave(std::vector<Client> &clients, const Response &response) ;
+				void	quit(std::vector<Client> &clients, const Response &response) ;
+				void	who(std::vector<Client> &clients, const Response &response) ;
+				void	list(std::vector<Client> &clients, const Response &response) ;
+				void	help(std::vector<Client> &clients, const Response &response) ;
+				void	Registr(std::vector<Client> &clients, const Response &response) ;
+				void	Login(std::vector<Client> &clients, const Response &response) ;
 					//	Check execute to client
 				Commands::Status	checkMessage(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 				Commands::Status	checkPrivateMessage(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
@@ -68,7 +70,7 @@ class ClientService
 
 		} ;
 
-		typedef	void				(Methods::*__funcExec)(std::vector<Client> &, const Response &, std::vector<int> &) ;
+		typedef	void				(Methods::*__funcExec)(std::vector<Client> &, const Response &) ;
 		typedef Commands::Status	(Methods::*__funcCheck)(const std::vector<Client> &, ClientRequest *, std::vector<std::string> &) ;
 
 
@@ -79,13 +81,17 @@ class ClientService
 	
 	public :
 	
-		ClientService(void);
+		ClientService(void) ;
 
-		~ClientService(void);
+		~ClientService(void) ;
 
 		void			registrClient(unsigned long socket, Response *response) ;
 
 		void			loginClient(unsigned long socket, Response *response) ;
+
+		void			disconnectClient(unsigned long socket) ; 
+
+		unsigned long	getIdRequest(unsigned long socket) ;
 
 		void			addRequest(int socket, ClientRequest *request) ;
 
@@ -93,11 +99,11 @@ class ClientService
 
 		void        	sendResponse(int socket) ;
 
-		void			sendResponseToClient(unsigned int socket);
+		void			sendResponseToClient(unsigned int socket) ;
 
-		Response		*checkToExecute(ClientRequest *request);
+		Response		*checkToExecute(ClientRequest *request) ;
 
-		std::vector<int>	execute(Response *response);
+		void			execute(Response *response) ;
 
 	private:
 

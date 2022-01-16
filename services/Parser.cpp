@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 17:16:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/15 18:55:05 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 20:03:39 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,14 @@ ServerMessage		*Parser::generateServerMessage(const std::string &rawRequest) {
 	return new ServerMessage(password, serverCommandType, clientCommandType, requestData, uid);
 }
 
-ServerMessage		*Parser::generateServerMessage(const ClientRequest &processedReqeust, const std::string &password) {
+ServerMessage		*Parser::generateServerMessage(const ClientRequest &processedReqeust) {
 	Commands::ServerCommandType		serverCommandType;
 	Commands::ClientCommandType		clientCommandType;
 	std::vector<std::string>		requestData;
 
 	__createServerReqeustByClientRequest(processedReqeust, serverCommandType, clientCommandType, requestData);
 
-	return new ServerMessage(password, serverCommandType, processedReqeust.getCommand(), requestData, processedReqeust.getUID().toString());
+	return new ServerMessage(serverCommandType, processedReqeust.getCommand(), requestData, processedReqeust.getUID().toString());
 }
 
 bool				Parser::isServerMessage(const std::string &rawRequest) {
