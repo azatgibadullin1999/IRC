@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 16:48:16 by zera              #+#    #+#             */
-/*   Updated: 2022/01/14 15:04:47 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/16 14:48:14 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,14 +63,16 @@ int							ConnectionsService::addConnection(std::string host, int port) {
 	if (error_code != 0) {
 		throw (ConnectionException(strerror(error_code)));
 	}
-	_connections.push_back((new Connection(sd))->setType(Connection::SERVER));
+	Connection *connection = new Connection(sd);
+	connection->setType(Connection::SERVER);
+	_connections.push_back(connection);
 	return (sd);
 }
 
 Connection::ConnectionType	ConnectionsService::getTypeConnection(int socket) {
 	Connection*		connection = _getConnection(socket);
-	if (connection) {
-		connection->getType();
+	if (connection != NULL) {
+		return connection->getType();
 	}
 	return Connection::NONE;
 }

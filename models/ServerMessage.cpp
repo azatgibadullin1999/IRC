@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerMessage.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:40:47 by root              #+#    #+#             */
-/*   Updated: 2022/01/12 13:17:05 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 10:31:46 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,10 @@ void		ServerMessage::setNumberOfWaitResponses(unsigned int num) {
 	_numberOfWaitResponses = num;
 }
 
+unsigned int		ServerMessage::getNumberOfWaitResponses() {
+	return _numberOfWaitResponses;
+}
+
 bool		ServerMessage::addResponse(ServerMessage *response) {
 	_response.push_back(response);
 	return !--_numberOfWaitResponses;
@@ -83,7 +87,7 @@ const std::string		ServerMessage::toString() const {
 	for (; it != _clientArgs.end(); it++)
 		dst += *it + " ";
 	
-	dst += "] " + _uid.toString();
+	dst += "] " + _uid.toString() + "\n";
 	
 	return dst;
 }

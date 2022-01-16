@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:09:40 by zera              #+#    #+#             */
-/*   Updated: 2022/01/14 13:52:54 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/16 11:55:28 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 # include <vector>
 # include "Sockets/ServerSocket.hpp"
 # include "Settings/ServerSettings.hpp"
-// # include "ClientService.hpp"
+# include "ClientService.hpp"
 # include "ServerClientService.hpp"
 # include "ConnectionsService.hpp"
 # include "../services/Parser.hpp"
@@ -45,17 +45,15 @@ class Server
 		void		run();
 
 	private:
-		// static ClientService				_clientService;
+		static ClientService				_clientService;
 		static ConnectionsService			_connectionsService;
 		static ServerClientService			_serverClientService;
 		static Parser						_parser;
 
 		ServerSettings						*_serverSettings;
 		ServerSocket						_serverSocket;
-		std::vector<ServerClient*>			_serverClients;
 		fd_set								_readFds;
 		fd_set								_writeFds;
-		// std::vector<int>					_connectionFds;
 		int									_fdMax;
 
 		void		setFds(fd_set &readFds, fd_set &writeFds);
@@ -63,6 +61,9 @@ class Server
 		void		connectEvent();
 		void		disconnectEvent(int fd);
 		void		readEvent(int fd);
+		void		connectionReadEvent(int fd, std::string &rawRq);
+		void		serverClientReadEvent(int fd, std::string &rawRq);
+		void		clientReadEvent(int fd, std::string &rawRq);
 		void		sendEvent(int sock);
 
 };

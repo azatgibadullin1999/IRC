@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerMessage.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:36:13 by root              #+#    #+#             */
-/*   Updated: 2022/01/12 13:17:55 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 09:47:41 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ class ServerMessage {
 		const std::string					toString() const ;
 
 		void		setNumberOfWaitResponses(unsigned int num) ;
+
+		unsigned int						getNumberOfWaitResponses() ;
 
 		bool		addResponse(ServerMessage *response) ;
 
