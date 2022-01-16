@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 17:52:49 by root              #+#    #+#             */
-/*   Updated: 2022/01/07 20:22:51 by root             ###   ########.fr       */
+/*   Updated: 2022/01/15 22:40:25 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@ class UID {
 	private :
 
 		unsigned long	_port;
-		unsigned long	_messageId;
 		unsigned long	_userId;
+		unsigned long	_messageId;
 
 	public :
 
-		UID(unsigned long port, unsigned long messageId, unsigned long userId) ;
+		UID(unsigned long port, unsigned long userId, unsigned long messageId) ;
 
 		UID(const std::string &uid) ;
 

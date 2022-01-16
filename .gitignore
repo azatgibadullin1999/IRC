@@ -33,3 +33,6 @@
 
 bircd/*
 .vscode/*
+
+.gitignore
+Server/test.cpp

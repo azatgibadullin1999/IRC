@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 18:32:23 by root              #+#    #+#             */
-/*   Updated: 2022/01/15 18:55:41 by root             ###   ########.fr       */
+/*   Updated: 2022/01/15 19:55:32 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ struct		Commands {
 			WHO,
 			LIST,
 			HELP,
+			REGISTR,
+			LOGIN,
 		} ;
 
 		enum ServerCommandType {
