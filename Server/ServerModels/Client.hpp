@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:20:11 by zera              #+#    #+#             */
-/*   Updated: 2022/01/15 21:23:51 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 17:11:25 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ class Client
 
 		unsigned long	getUserId() const ;
 
-		unsigned int	getIdRequest() const ;
+		unsigned int	getIdRequest() ;
 
 		const std::string	&getNickName() const ;
 

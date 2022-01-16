@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerMessage.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:36:13 by root              #+#    #+#             */
-/*   Updated: 2022/01/16 09:47:41 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/16 20:06:32 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,19 +55,26 @@ class ServerMessage {
 			STR_UID,
 		} ;
 
+		ServerMessage(const Commands::ServerCommandType &serverCommandType,
+					const Commands::ClientCommandType &clientCommandType,
+					const std::vector<std::string> &clientArgs,
+					const std::string &uid) ;
+		
 		ServerMessage(const std::string &password,
 					const Commands::ServerCommandType &serverCommandType,
 					const Commands::ClientCommandType &clientCommandType,
 					const std::vector<std::string> &clientArgs,
 					const std::string &uid) ;
-		
+
 		ServerMessage(const std::string &passwordToConnect,
 					const Commands::ServerCommandType &command,
 					const std::string &ourPassword) ;
 
 		~ServerMessage() ;
 
-		const std::string					&getPassword() const ;
+		const std::string		&getPassword() const ;
+
+		void					setPassword(const std::string &password) ;			
 
 		const Commands::ServerCommandType		&getServerCommand() const ;
 

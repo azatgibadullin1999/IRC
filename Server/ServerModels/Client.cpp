@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:39:00 by root              #+#    #+#             */
-/*   Updated: 2022/01/15 21:23:43 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 17:11:31 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ unsigned long	Client::getUserId() const {
 	return _userId;
 }
 
-unsigned int	Client::getIdRequest() const {
-	return _idRequest;
+unsigned int	Client::getIdRequest() {
+	return ++_idRequest;
 }
 
 void	Client::addRequest(ClientRequest *request) {
