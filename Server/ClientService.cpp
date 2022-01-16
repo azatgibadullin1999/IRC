@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:24:58 by root              #+#    #+#             */
-/*   Updated: 2022/01/16 14:52:34 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 20:38:55 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ ClientService::ClientService() : _methods() {
 	_funcExec[6] = &Methods::who;
 	_funcExec[7] = &Methods::list;
 	_funcExec[8] = &Methods::help;
+	_funcExec[9] = &Methods::Registr;
+	_funcExec[9] = &Methods::Login;
 	_funcCheck[0] = &Methods::checkMessage;
 	_funcCheck[1] = &Methods::checkPrivateMessage;
 	_funcCheck[2] = &Methods::checkNickName;
@@ -39,13 +41,33 @@ ClientService::ClientService() : _methods() {
 ClientService::~ClientService() { }
 
 void	ClientService::registrClient(unsigned long socket, Response *response) {
-	if (response->getCommandStatus() == Commands::SUCCESS)
+	if (response->getCommandStatus() == Commands::SUCCESS_SEND) {
 		_clients.push_back(Client(socket, response->getArguments()[0], response->getArguments()[1]));
+		__findeClient(socket, FindeSocket())->addResponse("[SERVER] you have successfully registered\n");
+	}
+	delete response;
 }
 
 void	ClientService::loginClient(unsigned long socket, Response *response) {
-	if (response->getCommandStatus() == Commands::FAIL)
-		__findeClient(response->getArguments()[0])->loginIn(socket);
+	if (response->getCommandStatus() == Commands::SUCCESS_NO_SEND) {
+		Client		*cl = __findeClient(socket, FindeSocket()).base();
+		
+		cl->loginIn(socket);
+		cl->addResponse("[SERVER] you have successfully logged in\n");
+	}
+	delete response;
+}
+
+void	ClientService::disconnectClient(unsigned long socket) {
+	Client	*cl = __findeClient(socket, FindeSocket()).base();
+
+	if (cl != _clients.end().base()) {
+		cl->loginOut();
+	}
+}
+
+unsigned long	ClientService::getIdRequest(unsigned long socket) {
+	return __findeClient(socket, FindeSocket())->getIdRequest();
 }
 
 void	ClientService::addRequest(int socket, ClientRequest *request) {
@@ -89,12 +111,10 @@ Response		*ClientService::checkToExecute(ClientRequest *request) {
 	return new Response(responseArgs, request->getUID(), status, request->getCommand());
 }
 
-std::vector<int>	ClientService::execute(Response *response) {
-	std::vector<int>	retSockets;
+void		ClientService::execute(Response *response) {
+	(_methods.*_funcExec[response->getClientCommand()])(_clients, *response);
 
-	(_methods.*_funcExec[response->getClientCommand()])(_clients, *response, retSockets);
-
-	return retSockets;
+	delete response;
 }
 
 
@@ -105,10 +125,9 @@ std::vector<int>	ClientService::execute(Response *response) {
 
 void	ClientService::Methods::message(
 	std::vector<Client> &clients,
-	const Response &response,
-	std::vector<int> &retSockets) {
+	const Response &response) {
 		std::vector<Client>::iterator	it = clients.begin();
-		const Client		*clientSendMessage = __findeClient(clients, response.getUID());
+		Client		*clientSendMessage = __findeClient(clients, response.getUID());
 
 		if (response.getCommandStatus() == Commands::ERROR)
 			return ;
@@ -117,122 +136,138 @@ void	ClientService::Methods::message(
 			if (it.base() != clientSendMessage
 			&& clientSendMessage->getChanel() == it->getChanel()) {
 				it->addResponse(response.toMessage());
-				retSockets.push_back(it->getSocket());
 			}
 		}
 	}
 
 void	ClientService::Methods::privateMessage(
 	std::vector<Client> &clients,
-	const Response &response,
-	std::vector<int> &retSockets) {
+	const Response &response) {
 		std::vector<Client>::iterator	it = clients.begin();
 
-		if (response.getCommandStatus() == Commands::ERROR)
+		if (response.getCommandStatus() == Commands::ERROR) {
+			Client		*clientSendMessage = __findeClient(clients, response.getUID());
+
+			if (clientSendMessage != clients.end().base())
+				clientSendMessage->addResponse("[SERVER] few arguments\n");
+
 			return ;
+		}
 
 		for (; it != clients.end(); it++) {
-			if (it->getNickName() == response.getArguments()[1]) {
+			if (it->getNickName() == response.getArguments()[1])
 				it->addResponse(response.toPrivateMessage());
-				retSockets.push_back(it->getSocket());
-			}
 		}
 	}
 
 void	ClientService::Methods::nickName(
 	std::vector<Client> &clients,
-	const Response &response,
-	std::vector<int> &retSockets) {
+	const Response &response) {
 		Client			*cl = __findeClient(clients, response.getUID());
 
 		if (cl != clients.end().base()) {
-			if (response.getCommandStatus() == Commands::SUCCESS) {
+			if (response.getCommandStatus() == Commands::SUCCESS_SEND) {
 				cl->setNickName(response.getArguments()[0]);
 				cl->addResponse("[SERVER] your nickname has been changed to : " + cl->getNickName() + "\n");
 			}
-			else {
-				cl->addResponse("[SERVER] change nickname is faild\n");
-			}
-			retSockets.push_back(cl->getSocket());
+			else if (response.getCommandStatus() == Commands::FAIL)
+				cl->addResponse("[SERVER] user with the same nickname already exists\n");
+			else
+				cl->addResponse("[SERVER] few arguments\n");
 		}
 	}
 
 void	ClientService::Methods::join(
 	std::vector<Client> &clients,
-	const Response &response,
-	std::vector<int> &retSockets) {
+	const Response &response) {
 		Client			*cl = __findeClient(clients, response.getUID());
 
 		if (cl != clients.end().base()) {
-			if (response.getCommandStatus() == Commands::SUCCESS) {
+			if (response.getCommandStatus() == Commands::SUCCESS_NO_SEND) {
 				cl->setChanel(response.getArguments()[0]);
-				cl->addResponse("[SERVER] your channel has been changed to : " + cl->getChanel() + "\n");
+				cl->addResponse("[SERVER] your channel has been changed to : " + cl->getChanel() + '\n');
 			}
-			else {
+			else
 				cl->addResponse("[SERVER] change channel is faild\n");
-			}
-			retSockets.push_back(cl->getSocket());
 		}
 	}
 
 void	ClientService::Methods::leave(
 	std::vector<Client> &clients,
-	const Response &response,
-	std::vector<int> &retSockets) {
-		
+	const Response &response) {
+		Client	*cl = __findeClient(clients, response.getUID());
+
+		if (cl != clients.end().base()) {
+			if (cl->getChanel() == "Hub")
+				cl->addResponse("[SERVER] you cant't leave form Hub\n");
+			else {
+				cl->addResponse("[SERVER] you leave channel : " + cl->getChanel() + '\n');
+				cl->setChanel("Hub");
+			}
+		}
 	}
 
 void	ClientService::Methods::quit(
 	std::vector<Client> &clients,
-	const Response &response,
-	std::vector<int> &retSockets) {
-		
+	const Response &response) {
+		Client	*cl = __findeClient(clients, response.getUID());
+
+		if (cl != clients.end().base()) {
+			cl->loginOut();
+		}
 	}
 
 void	ClientService::Methods::who(
 	std::vector<Client> &clients,
-	const Response &response,
-	std::vector<int> &retSockets) {
+	const Response &response) {
 		Client			*cl = __findeClient(clients, response.getUID());
 
 		if (cl != clients.end().base()) {
-			if (response.getCommandStatus() == Commands::SUCCESS) {
+			if (response.getCommandStatus() == Commands::SUCCESS_SEND)
 				cl->addResponse(response.toList());
-			}
-			else {
+			else
 				cl->addResponse("[SERVER] no such users found\n");
-			}
-			retSockets.push_back(cl->getSocket());
 		}
 	}
 
 void	ClientService::Methods::list(
 	std::vector<Client> &clients,
-	const Response &response,
-	std::vector<int> &retSockets) {
+	const Response &response) {
 		Client			*cl = __findeClient(clients, response.getUID());
 
 		if (cl != clients.end().base()) {
-			if (response.getCommandStatus() == Commands::SUCCESS) {
+			if (response.getCommandStatus() == Commands::SUCCESS_NO_SEND)
 				cl->addResponse(response.toList());
-			}
-			else {
+			else 
 				cl->addResponse("[SERVER] no channels\n");
-			}
-			retSockets.push_back(cl->getSocket());
 		}
 	}
 
 void	ClientService::Methods::help(
 	std::vector<Client> &clients,
-	const Response &response,
-	std::vector<int> &retSockets) {
+	const Response &response) {
 		Client			*cl = __findeClient(clients, response.getUID());
 
-		if (cl != clients.end().base()) {
+		if (cl != clients.end().base())
 			cl->addResponse(response.toList());
-			retSockets.push_back(cl->getSocket());
-		}
+	}
+
+void	ClientService::Methods::Registr(
+	std::vector<Client> &clients,
+	const Response &response) {
+		Client			*cl = __findeClient(clients, response.getUID());
+
+		if (cl != clients.end().base())
+			cl->addResponse("[SERVER] you already login in\n");
+	}
+
+void	ClientService::Methods::Login(
+	std::vector<Client> &clients,
+	const Response &response) {
+		Client			*cl = __findeClient(clients, response.getUID());
+
+		if (cl != clients.end().base())
+			cl->addResponse("[SERVER] you already login in\n");
 	}
 
 
@@ -255,7 +290,7 @@ Commands::Status	ClientService::Methods::checkMessage(
 		}
 
 		responseArgs = request->getArguments();
-		return Commands::SUCCESS;
+		return Commands::SUCCESS_SEND;
 	}
 
 Commands::Status	ClientService::Methods::checkPrivateMessage(
@@ -275,9 +310,9 @@ Commands::Status	ClientService::Methods::checkPrivateMessage(
 		for (; it != clients.end(); it++) {
 			if (it->getNickName() == *(request->getArguments().begin() + 1))
 				responseArgs = request->getArguments();
-				return Commands::SUCCESS;
+				return Commands::FAIL;
 		}
-		return Commands::FAIL;
+		return Commands::SUCCESS_SEND;
 	}
 
 Commands::Status	ClientService::Methods::checkNickName(
@@ -294,7 +329,7 @@ Commands::Status	ClientService::Methods::checkNickName(
 				return Commands::FAIL;
 		}
 		responseArgs.push_back(request->getArguments()[0]);
-		return Commands::SUCCESS;
+		return Commands::SUCCESS_SEND;
 	}
 
 Commands::Status	ClientService::Methods::checkJoin(
@@ -308,21 +343,21 @@ Commands::Status	ClientService::Methods::checkJoin(
 
 		responseArgs.push_back(request->getArguments()[0]);
 
-		return Commands::SUCCESS;
+		return Commands::SUCCESS_NO_SEND;
 	}
 
 Commands::Status	ClientService::Methods::checkLeave(
 	const std::vector<Client> &clients,
 	ClientRequest *request,
 	std::vector<std::string> &responseArgs) {
-		return Commands::FAIL;
+		return Commands::SUCCESS_NO_SEND;
 	}
 
 Commands::Status	ClientService::Methods::checkQuit(
 	const std::vector<Client> &clients,
 	ClientRequest *request,
 	std::vector<std::string> &responseArgs) {
-		return Commands::FAIL;
+		return Commands::SUCCESS_NO_SEND;
 	}
 
 Commands::Status	ClientService::Methods::checkWho(
@@ -331,44 +366,55 @@ Commands::Status	ClientService::Methods::checkWho(
 	std::vector<std::string> &responseArgs) {
 		std::vector<Client>::const_iterator		it = clients.begin();
 
-		if (request->getArguments().size() == 0)
-			return Commands::ERROR;
-
-		for (; it != clients.end(); it++) {
-			if (!it->getNickName().compare(0, request->getArguments().begin()->size(), *request->getArguments().begin()))
-				responseArgs.push_back(it->getNickName());
+		if (request->getArguments().size() == 0) {
+			for (; it != clients.end(); it++)
+				responseArgs.push_back(it->getNickName() + " : " + (it->isLogin() ? "is online" : "is offline"));
+		}
+		else {
+			for (; it != clients.end(); it++) {
+				if (!it->getNickName().compare(0, request->getArguments().begin()->size(), *request->getArguments().begin()))
+					responseArgs.push_back(it->getNickName());
+			}
 		}
 
-		return Commands::SUCCESS;
+		return Commands::SUCCESS_SEND;
 	}
 
 Commands::Status	ClientService::Methods::checkList(
 	const std::vector<Client> &clients,
 	ClientRequest *request,
 	std::vector<std::string> &responseArgs) {
-		std::vector<Client>::const_iterator		it1 = clients.begin();
+		std::vector<Client>::const_iterator			it = clients.begin();
+		std::vector<std::string>::const_iterator	itChannel;
 
-		for (; it1 != clients.end(); it1++) {
-			responseArgs.push_back(it1->getChanel());
+		responseArgs.push_back(it->getChanel());
+		for (; it != clients.end(); it++) {
+			itChannel = responseArgs.begin();
+			for (; itChannel != responseArgs.end(); itChannel++) {
+				if (*itChannel == it->getChanel())
+					break ;
+			}
+			if (itChannel == responseArgs.end())
+				responseArgs.push_back(it->getChanel());
 		}
 
-		return Commands::SUCCESS;
+		return Commands::SUCCESS_NO_SEND;
 	}
 
 Commands::Status	ClientService::Methods::checkHelp(
 	const std::vector<Client> &clients,
 	ClientRequest *request,
 	std::vector<std::string> &responseArgs) {
-		responseArgs.push_back("PRIVMSG - sending a private message . Example \"PRIVMSG UserNickName sperma \" ");
-		responseArgs.push_back("NICK - change of nickname . Example \"NICK __xXx_PeNiS_DeTrOv_xXx__\" ");
-		responseArgs.push_back("JOIN - change of channel . Example \"JOIN any_channel\" ");
-		responseArgs.push_back("LEAVE - leave channel");
-		responseArgs.push_back("QUIT - quit form server");
-		responseArgs.push_back("WHO - finde User by");
-		responseArgs.push_back("LIST - displays all channels");
-		responseArgs.push_back("HELP - shows all server commands");
+		responseArgs.push_back("[SERVER] PRIVMSG - sending a private message . Example \"PRIVMSG <UserNickName> <any message> \" ");
+		responseArgs.push_back("[SERVER] NICK - change of nickname . Example \"NICK <__xXx_PeNiS_DeTrOv_xXx__>\" ");
+		responseArgs.push_back("[SERVER] JOIN - change of channel . Example \"JOIN <any_channel>\" ");
+		responseArgs.push_back("[SERVER] LEAVE - leave channel");
+		responseArgs.push_back("[SERVER] QUIT - quit form server");
+		responseArgs.push_back("[SERVER] WHO - finde User by");
+		responseArgs.push_back("[SERVER] LIST - displays all channels");
+		responseArgs.push_back("[SERVER] HELP - shows all server commands");
 
-		return Commands::FAIL;
+		return Commands::SUCCESS_NO_SEND;
 	}
 
 Commands::Status	ClientService::Methods::checkRegistr(
@@ -380,13 +426,12 @@ Commands::Status	ClientService::Methods::checkRegistr(
 			return Commands::ERROR;
 
 		for (; it != clients.end(); it++) { 
-			if (request->getArguments()[0] == it->getNickName()) {
+			if (request->getArguments()[0] == it->getNickName())
 				return Commands::FAIL;
-			}
 		}
 
 		responseArgs = request->getArguments();
-		return Commands::SUCCESS;
+		return Commands::SUCCESS_SEND;
 }
 
 Commands::Status	ClientService::Methods::checkLogin(
@@ -402,11 +447,11 @@ Commands::Status	ClientService::Methods::checkLogin(
 				&& request->getArguments()[1] == it->getPassword()
 				&& !it->isLogin()) {
 				responseArgs = request->getArguments();
-				return Commands::FAIL;
+				return Commands::SUCCESS_NO_SEND;
 			}
 		}
 
-		return Commands::ERROR;
+		return Commands::FAIL;
 }
 
 

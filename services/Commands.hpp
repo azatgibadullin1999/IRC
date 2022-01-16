@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 18:32:23 by root              #+#    #+#             */
-/*   Updated: 2022/01/15 19:55:32 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 19:18:17 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ struct		Commands {
 	public :
 
 		enum Status {
-			SUCCESS,
+			SUCCESS_SEND,
+			SUCCESS_NO_SEND,
 			FAIL,
 			ERROR,
 		} ;

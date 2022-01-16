@@ -3,14 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   ServerMessage.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:40:47 by root              #+#    #+#             */
-/*   Updated: 2022/01/16 10:31:46 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/16 20:07:06 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "ServerMessage.hpp"
+
+ServerMessage::ServerMessage(
+	const Commands::ServerCommandType &serverCommandType,
+	const Commands::ClientCommandType &clientCommandType,
+	const std::vector<std::string> &clientArgs,
+	const std::string &uid) :
+		_serverCommandType(serverCommandType),
+		_clientCommandType(clientCommandType),
+		_clientArgs(clientArgs),
+		_uid(uid) { }
 
 ServerMessage::ServerMessage(
 	const std::string &password,
@@ -40,6 +50,10 @@ ServerMessage::~ServerMessage() { }
 
 const std::string		&ServerMessage::getPassword() const {
 	return _password;
+}
+
+void					ServerMessage::setPassword(const std::string &password) {
+	_password = password;
 }
 
 const Commands::ServerCommandType		&ServerMessage::getServerCommand() const {
