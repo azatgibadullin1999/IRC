@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 14:05:54 by zera              #+#    #+#             */
-/*   Updated: 2022/01/14 13:27:56 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/16 21:32:54 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 
 # include <string>
 # include <unistd.h>
+# include <vector>
+# include "../../models/ClientRequest.hpp"
+# include "../../models/ServerMessage.hpp"
 
 
 class Connection
@@ -39,6 +42,7 @@ class Connection
 		int					getSocket() { return _socket; }
 		ConnectionType		getType() { return _type; }
 		std::string			getRawRq() { return _rawRq; }
+		std::vector<std::string>	&getResponses() { return _responses; }
 		Connection*			setType(ConnectionType type) {
 			_type = type;
 			return this;
@@ -48,10 +52,14 @@ class Connection
 			return this;
 		}
 
+
 	private:
 		int					_socket;
 		ConnectionType		_type;
 		std::string			_rawRq;
+		ClientRequest		*_clientRq;
+		ServerMessage		*_serverRq;
+		std::vector<std::string>	_responses;
 
 };
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientService.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:24:58 by root              #+#    #+#             */
-/*   Updated: 2022/01/16 21:25:25 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 22:23:56 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ void	ClientService::Methods::privateMessage(
 		}
 
 		for (; it != clients.end(); it++) {
-			if (it->getNickName() == response.getArguments()[1])
+			if (it->getNickName() == response.getArguments()[0])
 				it->addResponse(response.toPrivateMessage());
 		}
 	}

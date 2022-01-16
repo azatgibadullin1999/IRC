@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 16:48:16 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 14:48:14 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/16 20:53:50 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,13 @@ ConnectionsService::~ConnectionsService(void) {
 	_connections.clear();
 }
 
-void						ConnectionsService::setFds(fd_set &readFds) {
+void						ConnectionsService::setFds(fd_set &readFds, fd_set &writeFds) {
 	for (std::vector<Connection*>::iterator connection = _connections.begin();
 		 connection < _connections.end(); connection++) {
 		FD_SET((*connection)->getSocket(), &readFds);
+		if (!(*connection)->getResponses().empty()) {
+			FD_SET((*connection)->getSocket(), &writeFds);
+		}
 	}
 }
 
@@ -91,6 +94,12 @@ void						ConnectionsService::setTypeConnection(int socket, Connection::Connecti
 	_getConnection(socket)->setType(type);
 }
 
+void						ConnectionsService::addResponse(int socket, std::string response) {
+	Connection *connection = _getConnection(socket);
+	if (connection != NULL) {
+		connection->getResponses().push_back(response);
+	}
+}
 
 Connection*					ConnectionsService::_getConnection(int socket) {
 	for (std::vector<Connection*>::iterator connection = _connections.begin();

@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/08 11:27:01 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 12:37:15 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/16 21:05:04 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ Response	*ServerClientService::addRequest(int socket, ServerMessage *request, Re
 		// Need Response
 		if (sender == NULL) {
 			// From client add to OUR requests
-			if (response->getCommandStatus() != Commands::SUCCESS || _serverClients.empty()) {
+			if (response->getCommandStatus() == Commands::SUCCESS_NO_SEND || _serverClients.empty()) {
 				delete request;
 				return response;
 			} else {
@@ -42,7 +42,7 @@ Response	*ServerClientService::addRequest(int socket, ServerMessage *request, Re
 			}
 		} else {
 			// From server add to ServerClient requests
-			if (response->getCommandStatus() != Commands::SUCCESS) {
+			if (response->getCommandStatus() != Commands::SUCCESS_SEND) {
 				sender->getMsgToSend()->push_back(new ServerMessage(sender->getPassword(), Commands::RESPONSE,
 					response->getClientCommand(), response->getArguments(), response->getUID().toString()));
 				delete request;

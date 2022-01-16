@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 13:35:05 by zera              #+#    #+#             */
-/*   Updated: 2022/01/14 15:38:55 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/16 20:38:12 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ class ConnectionsService
 		ConnectionsService(void) { }
 		~ConnectionsService(void) ;
 
-	void							setFds(fd_set &readFds);
+		void						setFds(fd_set &readFds, fd_set &writeFds);
 
 		std::string					addRequest(int socket, std::string rq);
 
@@ -60,6 +60,8 @@ class ConnectionsService
 		void						setTypeConnection(int socket, Connection::ConnectionType type);
 
 		void						disconnect(int socket);
+
+		void						addResponse(int socket, std::string response);
 
 	private:
 		std::vector<Connection*>	_connections;
