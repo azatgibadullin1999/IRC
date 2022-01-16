@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:24:58 by root              #+#    #+#             */
-/*   Updated: 2022/01/15 22:37:04 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 13:30:41 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ Client	&ClientService::registrClient(unsigned long socket, Response *response) {
 }
 
 Client	&ClientService::loginClient(unsigned long socket, Response *response) {
-	if (response->getCommandStatus() == Commands::SUCCESS)
+	if (response->getCommandStatus() == Commands::FAIL)
 		__findeClient(response->getArguments()[0])->loginIn(socket);
 }
 
@@ -382,32 +382,42 @@ Commands::Status	ClientService::Methods::checkHelp(
 		return Commands::FAIL;
 	}
 
-Commands::Status	ClientService::Methods::checkRegistr(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) {
-	std::vector<Client>::const_iterator		it = clients.begin();
-	if (request->getArguments().size() < 2)
-		return Commands::ERROR;
+Commands::Status	ClientService::Methods::checkRegistr(
+	const std::vector<Client> &clients,
+	ClientRequest *request,
+	std::vector<std::string> &responseArgs) {
+		std::vector<Client>::const_iterator		it = clients.begin();
+		if (request->getArguments().size() < 2)
+			return Commands::ERROR;
 
-	for (; it != clients.end(); it++) { 
-		if (request->getArguments()[0] == it->getNickName())
-			return Commands::FAIL;
-	}
+		for (; it != clients.end(); it++) { 
+			if (request->getArguments()[0] == it->getNickName()) {
+				return Commands::FAIL;
+			}
+		}
 
-	return Commands::SUCCESS;
+		responseArgs = request->getArguments();
+		return Commands::SUCCESS;
 }
 
-Commands::Status	ClientService::Methods::checkLogin(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) {
-	std::vector<Client>::const_iterator		it = clients.begin();
-	if (request->getArguments().size() < 2)
+Commands::Status	ClientService::Methods::checkLogin(
+	const std::vector<Client> &clients,
+	ClientRequest *request,
+	std::vector<std::string> &responseArgs) {
+		std::vector<Client>::const_iterator		it = clients.begin();
+		if (request->getArguments().size() < 2)
+			return Commands::ERROR;
+
+		for (; it != clients.end(); it++) { 
+			if (request->getArguments()[0] == it->getNickName()
+				&& request->getArguments()[1] == it->getPassword()
+				&& !it->isLogin()) {
+				responseArgs = request->getArguments();
+				return Commands::FAIL;
+			}
+		}
+
 		return Commands::ERROR;
-
-	for (; it != clients.end(); it++) { 
-		if (request->getArguments()[0] == it->getNickName()
-			&& request->getArguments()[1] == it->getPassword()
-			&& !it->isLogin())
-			return Commands::SUCCESS;
-	}
-
-	return Commands::FAIL;
 }
 
 
