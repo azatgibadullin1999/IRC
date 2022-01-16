@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:16:51 by zera              #+#    #+#             */
-/*   Updated: 2022/01/15 22:24:41 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 13:37:30 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,9 @@ class ClientService
 
 		~ClientService(void);
 
-		Client			&registrClient(unsigned long socket, Response *response) ;
+		void			registrClient(unsigned long socket, Response *response) ;
 
-		Client			&loginClient(unsigned long socket, Response *response) ;
+		void			loginClient(unsigned long socket, Response *response) ;
 
 		void			addRequest(int socket, ClientRequest *request) ;
 

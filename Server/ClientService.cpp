@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:24:58 by root              #+#    #+#             */
-/*   Updated: 2022/01/16 13:30:41 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 13:37:16 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,12 @@ ClientService::ClientService() : _methods() {
 
 ClientService::~ClientService() { }
 
-Client	&ClientService::registrClient(unsigned long socket, Response *response) {
+void	ClientService::registrClient(unsigned long socket, Response *response) {
 	if (response->getCommandStatus() == Commands::SUCCESS)
 		_clients.push_back(Client(socket, response->getArguments()[0], response->getArguments()[1]));
 }
 
-Client	&ClientService::loginClient(unsigned long socket, Response *response) {
+void	ClientService::loginClient(unsigned long socket, Response *response) {
 	if (response->getCommandStatus() == Commands::FAIL)
 		__findeClient(response->getArguments()[0])->loginIn(socket);
 }
