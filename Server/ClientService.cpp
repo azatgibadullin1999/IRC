@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:24:58 by root              #+#    #+#             */
-/*   Updated: 2022/01/16 13:37:16 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 14:52:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,17 +68,6 @@ void		ClientService::setFds(fd_set &writeFds) {
 	}
 }
 
-// void		ClientService::sendResponse(int socket) {
-// 	std::vector<ServerMessage> *toSend = serverClient->getMsgToSend();
-
-// 	while (toSend->size() != 0) {
-// 		ServerMessage *rq = *(toSend->rbegin());
-// 		send(socket, rq->toString().c_str(), rq->toString().length(), 0);
-// 		toSend->erase(--toSend->end());
-// 		delete (rq);
-// 	}
-// }
-
 void		ClientService::sendResponseToClient(unsigned int socket) {
 	Client		*cl = __findeClient(socket, FindeSocket()).base();
 
@@ -87,7 +76,7 @@ void		ClientService::sendResponseToClient(unsigned int socket) {
 	}
 
 	for (size_t	i = 0; i < cl->responses.size(); i++)
-		write(1, cl->responses[i].c_str(), cl->responses[i].size());
+		write(socket, cl->responses[i].c_str(), cl->responses[i].size());
 	cl->responses.clear();
 }
 
