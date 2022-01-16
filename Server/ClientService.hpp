@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:16:51 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 20:18:51 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 21:25:17 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ class ClientService
 
 
 		Methods					_methods;
-		__funcExec				_funcExec[9];
+		__funcExec				_funcExec[11];
 		__funcCheck				_funcCheck[11];
 		std::vector<Client>		_clients;
 	

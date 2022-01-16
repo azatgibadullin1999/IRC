@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:24:58 by root              #+#    #+#             */
-/*   Updated: 2022/01/16 20:38:55 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 21:25:25 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ ClientService::ClientService() : _methods() {
 	_funcExec[7] = &Methods::list;
 	_funcExec[8] = &Methods::help;
 	_funcExec[9] = &Methods::Registr;
-	_funcExec[9] = &Methods::Login;
+	_funcExec[10] = &Methods::Login;
 	_funcCheck[0] = &Methods::checkMessage;
 	_funcCheck[1] = &Methods::checkPrivateMessage;
 	_funcCheck[2] = &Methods::checkNickName;
