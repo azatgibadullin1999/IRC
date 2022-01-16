@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 15:28:11 by root             ###   ########.fr       */
+/*   Updated: 2022/01/16 22:22:46 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	Server::run () {
 void	Server::setFds(fd_set &readFds, fd_set &writeFds) {
 	FD_ZERO(&readFds);
 	FD_ZERO(&writeFds);
-	_connectionsService.setFds(readFds);
+	_connectionsService.setFds(readFds, writeFds);
 	FD_SET(_serverSocket.getSocket(), &readFds);
 	_serverClientService.setFds(writeFds);
 	_clientService.setFds(writeFds);
@@ -134,25 +134,22 @@ void	Server::connectionReadEvent(int fd, std::string &rawRq) {
 				std::cout << clientRequest->getCommand() << " " << clientRequest->getArguments()[0] << " " << clientRequest->getArguments()[1] << std::endl;
 				Response *resp = _clientService.checkToExecute(clientRequest);
 				std::cout << resp->getCommandStatus() << std::endl;
-				std::cout << "Чекер " << fd << resp->getArguments()[0] << " " << resp->getArguments()[1] << std::endl;
-				if (resp->getCommandStatus() == Commands::SUCCESS) {
+				if (resp->getCommandStatus() == Commands::SUCCESS_SEND || resp->getCommandStatus() == Commands::SUCCESS_NO_SEND) {
 					resp = _serverClientService.addRequest(fd,
-							_parser.generateServerMessage(*clientRequest, _serverSettings->getPassword()), resp);
+							_parser.generateServerMessage(*clientRequest), resp);
 					if (resp != NULL) {
 						// Если серверов нет и всё гуд
-						std::cout << "Серверов нет и всё гуд" << std::endl;
 						_connectionsService.setTypeConnection(fd, Connection::CLIENT);
 						if (clientRequest->getCommand() == Commands::REGISTR) {
-							std::cout << fd << resp->getArguments()[0] << " " << resp->getArguments()[1] << " " << " отправлен на регистрацию" << std::endl;
 							_clientService.registrClient(fd, resp);
-							std::cout << fd << " зарегался" << std::endl;
 						} else if (clientRequest->getCommand() == Commands::LOGIN) {
 							_clientService.loginClient(fd, resp);
 						}
 					} else {
 						// добавить реквест коннектиону
 					}
-				} else if (resp != NULL && resp->getCommandStatus() != Commands::SUCCESS) {
+				} else if (resp->getCommandStatus() == Commands::FAIL || resp->getCommandStatus() == Commands::ERROR) {
+					// Не прошёл проверку
 					delete resp;
 					delete clientRequest;
 					// Error нужно зарегаться или залогиниться
@@ -192,21 +189,14 @@ void		Server::serverClientReadEvent(int fd, std::string &rawRq) {
 void		Server::clientReadEvent(int fd, std::string &rawRq) {
 	try {
 		// клиент гет идреквест
-		UID		uid = UID(atoll(_serverSettings->getPort().c_str()), fd, 1);
+		UID		uid = UID(atoll(_serverSettings->getPort().c_str()), fd, _clientService.getIdRequest(fd));
 		ClientRequest *clientRequest = _parser.generateClientRequest(rawRq, uid);
 		_clientService.addRequest(fd, clientRequest);
 		Response *response =_clientService.checkToExecute(clientRequest);
-		if (response->getCommandStatus() == Commands::SUCCESS) {
-			// убрать пароль из генератора и добавить сеттер
-			ServerMessage *serverMessage = _parser.generateServerMessage(*clientRequest, _serverSettings->getPassword());
-			response = _serverClientService.addRequest(fd, serverMessage, response);
-			if (response != NULL) {
-				std::cout << fd << " запрос " << response->getClientCommand() << " " << response->getArguments()[0] << std::endl;
-				_clientService.execute(response);
-
-			}
-		} else {
-			// _clientService.error(response);
+		ServerMessage *serverMessage = _parser.generateServerMessage(*clientRequest);
+		response = _serverClientService.addRequest(fd, serverMessage, response);
+		if (response != NULL) {
+			_clientService.execute(response);
 		}
 	} catch (std::exception &e) {
 
