@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/17 18:48:46 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/17 18:50:07 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void Server::connectEvent() {
 
 void Server::disconnectEvent(int fd) {
 	_connectionsService.disconnect(fd);
-	//clientService.delete(fd);
+	_clientService.disconnectClient(fd);
 	std::cout << "Client disconnected " << fd << std::endl;
 }
 
