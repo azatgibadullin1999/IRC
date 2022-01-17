@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:24:58 by root              #+#    #+#             */
-/*   Updated: 2022/01/17 19:18:39 by root             ###   ########.fr       */
+/*   Updated: 2022/01/17 19:28:23 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ unsigned long	ClientService::getIdRequest(unsigned long socket) {
 
 unsigned long	ClientService::getUserId(unsigned long socket) {
 	return __findeClient(socket, FindeSocket())->getUserId();
-} 
+}
 
 void	ClientService::addRequest(int socket, ClientRequest *request) {
 	std::vector<Client>::iterator	it = _clients.begin();
@@ -105,7 +105,7 @@ void		ClientService::sendResponseToClient(unsigned int socket) {
 	}
 
 	for (size_t	i = 0; i < cl->responses.size(); i++)
-		write(socket, cl->responses[i].c_str(), cl->responses[i].size());
+		send(socket, cl->responses[i].c_str(), cl->responses[i].size(), 0);
 	cl->responses.clear();
 }
 
