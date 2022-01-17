@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 22:22:46 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/17 18:50:07 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void Server::connectEvent() {
 
 void Server::disconnectEvent(int fd) {
 	_connectionsService.disconnect(fd);
-	//clientService.delete(fd);
+	_clientService.disconnectClient(fd);
 	std::cout << "Client disconnected " << fd << std::endl;
 }
 
@@ -152,10 +152,12 @@ void	Server::connectionReadEvent(int fd, std::string &rawRq) {
 					// Не прошёл проверку
 					delete resp;
 					delete clientRequest;
+					_connectionsService.addResponse(fd, "[SERVER] you need to /LOGIN or /REGISTER\n");
 					// Error нужно зарегаться или залогиниться
 				}
 			} else {
 				delete clientRequest;
+				_connectionsService.addResponse(fd, "[SERVER] you need to /LOGIN or /REGISTER\n");
 				// Error нужно зарегаться или залогиниться
 			}
 		} catch (std::exception &e) {
@@ -209,6 +211,8 @@ void Server::sendEvent(int sock) {
 		_serverClientService.sendServerMsg(sock);
 	} else if (_connectionsService.getTypeConnection(sock) == Connection::CLIENT) {
 		_clientService.sendResponseToClient(sock);
+	} else if (_connectionsService.getTypeConnection(sock) == Connection::NONE) {
+		_connectionsService.sendMsg(sock);
 	}
 	FD_CLR(sock, &_writeFds);
 }
