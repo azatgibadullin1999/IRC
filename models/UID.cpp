@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 17:58:52 by root              #+#    #+#             */
-/*   Updated: 2022/01/14 14:53:12 by root             ###   ########.fr       */
+/*   Updated: 2022/01/17 19:12:17 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ bool			UID::operator != (const std::string &other) const {
 }
 
 std::string		UID::toString() const {
-	return std::string(ft::to_string(_port) + ":" + ft::to_string(_messageId) + ":" + ft::to_string(_userId));
+	return std::string(ft::to_string(_port) + ":" + ft::to_string(_userId) + ":" + ft::to_string(_messageId));
 }
 
 unsigned long	UID::getPort() const {
