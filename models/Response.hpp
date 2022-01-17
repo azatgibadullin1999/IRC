@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:34:29 by root              #+#    #+#             */
-/*   Updated: 2022/01/15 17:38:28 by root             ###   ########.fr       */
+/*   Updated: 2022/01/17 13:56:52 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <vector>
 # include "UID.hpp"
 # include "../services/Commands.hpp"
+# include "../services/utils.hpp"
 
 
 class Response {

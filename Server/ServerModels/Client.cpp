@@ -6,15 +6,16 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:39:00 by root              #+#    #+#             */
-/*   Updated: 2022/01/16 17:11:31 by root             ###   ########.fr       */
+/*   Updated: 2022/01/17 14:42:26 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client(unsigned long socket, const std::string &nickName, const std::string &password) :
+Client::Client(unsigned long socket, const std::string &login, const std::string &password) :
 	_socket(socket),
-	_nickName(nickName),
+	_nickName(login),
+	_login(login),
 	_password(password),
 	_userId(socket),
 	_chanel("Hub"),
@@ -58,6 +59,10 @@ void	Client::addResponse(const std::string &response) {
 
 const std::string	&Client::getNickName() const {
 	return _nickName;
+}
+
+const std::string	&Client::getLogin() const  {
+	return _login;
 }
 
 const std::string	&Client::getPassword() const {
