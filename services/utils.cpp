@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 17:31:56 by root              #+#    #+#             */
-/*   Updated: 2022/01/06 15:13:24 by root             ###   ########.fr       */
+/*   Updated: 2022/01/17 18:29:55 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,3 +48,38 @@ std::string		ft::to_string(unsigned long value) {
 
 	return dst;
 }
+
+const std::string	ColorMessage::serverPrefixSuccess() {
+	return "\033[48;5;22m[SERVER]\033[m ";
+}
+
+const std::string	ColorMessage::serverPrefixFail() {
+	return "\033[48;5;52m[SERVER]\033[m ";
+}
+
+const std::string	ColorMessage::clientPrefix(std::string nickname) {
+	unsigned long	color = 0;
+
+	for (size_t i = 0; i < nickname.size(); i++)
+		color += nickname[i];
+	color %= 229;
+	++color;
+
+	nickname.insert(0, "\033[38;5;" + ft::to_string(color) + 'm');
+	nickname.insert(nickname.size(), "\033[m");
+	return nickname;
+}
+
+const std::string	ColorMessage::channelPrefix(std::string channel) {
+	unsigned long	color = 0;
+
+	for (size_t i = 0; i < channel.size(); i++)
+		color -= channel[i];
+	color %= 229;
+	++color;
+
+	channel.insert(0, "\033[38;5;" + ft::to_string(color) + 'm');
+	channel.insert(channel.size(), "\033[m");
+	return channel;
+}
+

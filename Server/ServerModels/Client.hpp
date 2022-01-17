@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:20:11 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 17:11:25 by root             ###   ########.fr       */
+/*   Updated: 2022/01/17 15:49:28 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ class Client
 	private :
 
 		std::string		_nickName;
+
+		std::string		_login;
 		std::string		_password;
 
 		std::string		_chanel;
@@ -33,6 +35,7 @@ class Client
 		unsigned long	_userId;
 		unsigned int	_idRequest;
 		bool			_loginStatus;
+		bool			_operatorStatus;
 
 
 	public :
@@ -40,7 +43,7 @@ class Client
 		std::vector<ClientRequest*>	requests;
 		std::vector<std::string>	responses;
 
-		Client(unsigned long socket, const std::string &nickName, const std::string &password) ;
+		Client(unsigned long socket, const std::string &login, const std::string &password) ;
 
 		~Client(void) ;
 
@@ -53,6 +56,8 @@ class Client
 		const std::string	&getNickName() const ;
 
 		void				setNickName(const std::string &newNickName) ;
+
+		const std::string	&getLogin() const ;
 
 		const std::string	&getPassword() const ;
 
