@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 16:48:16 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 20:53:50 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/16 23:32:37 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,17 @@ void						ConnectionsService::addResponse(int socket, std::string response) {
 	Connection *connection = _getConnection(socket);
 	if (connection != NULL) {
 		connection->getResponses().push_back(response);
+	}
+}
+
+void						ConnectionsService::sendMsg(int socket) {
+	Connection *connection = _getConnection(socket);
+	if (connection != NULL) {
+		for(std::vector<std::string>::iterator response = connection->getResponses().begin();
+				response < connection->getResponses().end(); response++) {
+			send(socket, (*response).c_str(), (*response).size(), 0);
+		}
+		connection->getResponses().clear();
 	}
 }
 

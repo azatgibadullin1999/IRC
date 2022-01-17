@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 13:35:05 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 20:38:12 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/16 23:26:50 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ class ConnectionsService
 		void						disconnect(int socket);
 
 		void						addResponse(int socket, std::string response);
+
+		void						sendMsg(int socket);
 
 	private:
 		std::vector<Connection*>	_connections;
