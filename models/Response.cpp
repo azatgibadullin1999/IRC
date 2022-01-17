@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 16:18:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/15 17:51:50 by root             ###   ########.fr       */
+/*   Updated: 2022/01/17 14:16:16 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,9 @@ std::string		Response::toList() const {
 	std::vector<std::string>::const_iterator	it = _requestData.begin();
 	std::string		dst;
 
+	dst += ColorMessage::serverPrefixSuccess() + *it++ + '\n';
 	for (; it != _requestData.end(); it++)
-		dst += *it + '\n';
+		dst += "\t " + *it + '\n';
 
 	return dst;
 }
@@ -64,8 +65,8 @@ std::string		Response::toMessage() const {
 	std::vector<std::string>::const_iterator	it = _requestData.begin();
 	std::string		dst;
 
-	dst += '[' + *it++ + ']';
-	dst += '[' + *it++ + "] ";
+	dst += '[' + ColorMessage::channelPrefix(*it++) + ']';
+	dst += '[' + ColorMessage::clientPrefix(*it++) + "] ";
 	for (; it != _requestData.end(); it++)
 		dst += *it + ' ';
 	dst += '\n';
@@ -77,7 +78,7 @@ std::string		Response::toPrivateMessage() const {
 	std::vector<std::string>::const_iterator	it = _requestData.begin();
 	std::string		dst;
 
-	dst += '[' + *it++ + "] ";
+	dst += '[' + ColorMessage::clientPrefix(*it++) + "] ";
 	++it;
 	for (; it != _requestData.end(); it++)
 		dst += *it + ' ';
