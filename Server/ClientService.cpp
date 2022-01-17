@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:24:58 by root              #+#    #+#             */
-/*   Updated: 2022/01/17 18:20:22 by root             ###   ########.fr       */
+/*   Updated: 2022/01/17 19:18:39 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ void	ClientService::registrClient(unsigned long socket, Response *response) {
 
 void	ClientService::loginClient(unsigned long socket, Response *response) {
 	if (response->getCommandStatus() == Commands::SUCCESS_NO_SEND) {
-		Client		*cl = __findeClient(socket, FindeSocket()).base();
-		
+		Client		*cl = __findeClient(response->getArguments()[0]).base();
+
 		cl->loginIn(socket);
 		cl->addResponse(ColorMessage::serverPrefixSuccess() + "you have successfully logged in\n");
 	}
@@ -65,12 +65,17 @@ void	ClientService::disconnectClient(unsigned long socket) {
 
 	if (cl != _clients.end().base()) {
 		cl->loginOut();
+		std::cout << cl->isLogin() << std::endl;
 	}
 }
 
 unsigned long	ClientService::getIdRequest(unsigned long socket) {
 	return __findeClient(socket, FindeSocket())->getIdRequest();
 }
+
+unsigned long	ClientService::getUserId(unsigned long socket) {
+	return __findeClient(socket, FindeSocket())->getUserId();
+} 
 
 void	ClientService::addRequest(int socket, ClientRequest *request) {
 	std::vector<Client>::iterator	it = _clients.begin();
@@ -300,6 +305,8 @@ Commands::Status	ClientService::Methods::checkMessage(
 	std::vector<std::string> &responseArgs) {
 		if (request->getArguments().size() == 0)
 			return Commands::ERROR;
+		
+		std::cout << request->getUID().toString() << std::endl;
 
 		const Client	*cl = __findeClient(clients, request->getUID());
 		if (cl != clients.end().base()) {
@@ -386,9 +393,10 @@ Commands::Status	ClientService::Methods::checkWho(
 
 		if (request->getArguments().size() == 0) {
 			for (; it != clients.end(); it++) {
-				responseArgs.push_back("User\t: " + ColorMessage::clientPrefix(it->getLogin()));
-				responseArgs.push_back("Nick\t: " + ColorMessage::clientPrefix(it->getNickName()));
-				responseArgs.push_back("Status\t: " + std::string(it->isLogin() ? "\033[38;5;28mis online\033[m" : "\033[38;5;52mis offline\033[m"));
+				responseArgs.push_back("User\t : " + ColorMessage::clientPrefix(it->getLogin()));
+				responseArgs.push_back("Nick\t : " + ColorMessage::clientPrefix(it->getNickName()));
+				responseArgs.push_back("Channel : " + ColorMessage::channelPrefix(it->getChanel()));
+				responseArgs.push_back("Status\t : " + std::string(it->isLogin() ? "\033[38;5;28mis online\033[m" : "\033[38;5;52mis offline\033[m"));
 				responseArgs.push_back(" ");
 			}
 		}
@@ -397,6 +405,7 @@ Commands::Status	ClientService::Methods::checkWho(
 				if (!it->getNickName().compare(0, request->getArguments().begin()->size(), *request->getArguments().begin())) {
 					responseArgs.push_back("User\t: " + ColorMessage::clientPrefix(it->getLogin()));
 					responseArgs.push_back("Nick\t: " + ColorMessage::clientPrefix(it->getNickName()));
+					responseArgs.push_back("Channel\t: " + ColorMessage::channelPrefix(it->getChanel()));
 					responseArgs.push_back("Status\t: " + std::string(it->isLogin() ? "\033[38;5;28mis online\033[m" : "\033[38;5;52mis offline\033[m"));
 					responseArgs.push_back(" ");
 				}

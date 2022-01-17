@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:16:51 by zera              #+#    #+#             */
-/*   Updated: 2022/01/17 15:53:29 by root             ###   ########.fr       */
+/*   Updated: 2022/01/17 19:17:41 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,8 @@ class ClientService
 		void			disconnectClient(unsigned long socket) ; 
 
 		unsigned long	getIdRequest(unsigned long socket) ;
+
+		unsigned long	getUserId(unsigned long socket) ;
 
 		void			addRequest(int socket, ClientRequest *request) ;
 
