@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/17 18:50:07 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/17 19:48:35 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,9 +131,7 @@ void	Server::connectionReadEvent(int fd, std::string &rawRq) {
 			ClientRequest *clientRequest = _parser.generateClientRequest(rawRq, uid);
 			if (clientRequest->getCommand() == Commands::REGISTR || 
 				clientRequest->getCommand() == Commands::LOGIN) {
-				std::cout << clientRequest->getCommand() << " " << clientRequest->getArguments()[0] << " " << clientRequest->getArguments()[1] << std::endl;
 				Response *resp = _clientService.checkToExecute(clientRequest);
-				std::cout << resp->getCommandStatus() << std::endl;
 				if (resp->getCommandStatus() == Commands::SUCCESS_SEND || resp->getCommandStatus() == Commands::SUCCESS_NO_SEND) {
 					resp = _serverClientService.addRequest(fd,
 							_parser.generateServerMessage(*clientRequest), resp);
@@ -150,9 +148,9 @@ void	Server::connectionReadEvent(int fd, std::string &rawRq) {
 					}
 				} else if (resp->getCommandStatus() == Commands::FAIL || resp->getCommandStatus() == Commands::ERROR) {
 					// Не прошёл проверку
+					_connectionsService.addResponse(fd, "[SERVER] invalid arguments");
 					delete resp;
 					delete clientRequest;
-					_connectionsService.addResponse(fd, "[SERVER] you need to /LOGIN or /REGISTER\n");
 					// Error нужно зарегаться или залогиниться
 				}
 			} else {
@@ -161,6 +159,7 @@ void	Server::connectionReadEvent(int fd, std::string &rawRq) {
 				// Error нужно зарегаться или залогиниться
 			}
 		} catch (std::exception &e) {
+			_connectionsService.addResponse(fd, e.what());
 			// Error e.what
 		}
 	}
@@ -171,6 +170,7 @@ void		Server::serverClientReadEvent(int fd, std::string &rawRq) {
 			ServerMessage *serverMsg = _parser.generateServerMessage(rawRq);
 			Response *resp;
 			if (serverMsg->getServerCommand() == Commands::REQUEST) {
+				std::cout << "Args " << serverMsg->getClientArgs().size() << std::endl;
 				ClientRequest *clientRequest = new ClientRequest(serverMsg->getClientArgs(),
 											 serverMsg->getClientCommand(), serverMsg->getUID());
 				resp = _clientService.checkToExecute(clientRequest);
@@ -191,7 +191,7 @@ void		Server::serverClientReadEvent(int fd, std::string &rawRq) {
 void		Server::clientReadEvent(int fd, std::string &rawRq) {
 	try {
 		// клиент гет идреквест
-		UID		uid = UID(atoll(_serverSettings->getPort().c_str()), fd, _clientService.getIdRequest(fd));
+		UID		uid = UID(atoll(_serverSettings->getPort().c_str()), _clientService.getUserId(fd), _clientService.getIdRequest(fd));
 		ClientRequest *clientRequest = _parser.generateClientRequest(rawRq, uid);
 		_clientService.addRequest(fd, clientRequest);
 		Response *response =_clientService.checkToExecute(clientRequest);
