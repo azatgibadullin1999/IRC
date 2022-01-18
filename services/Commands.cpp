@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 22:21:00 by root              #+#    #+#             */
-/*   Updated: 2022/01/17 15:47:07 by root             ###   ########.fr       */
+/*   Updated: 2022/01/18 19:22:38 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,10 @@ Commands::Commands() {
 	_clientCommands.push_back("/REGISTER");
 	_clientCommands.push_back("/LOGIN");
 
-	// _clientCommands.push_back("/OPER");
-	// _clientCommands.push_back("/KICK");
-	// _clientCommands.push_back("/KILL");
+	_clientCommands.push_back("/OPER");
+	_clientCommands.push_back("/KICK");
+	_clientCommands.push_back("/KILL");
+	_clientCommands.push_back("/DIE");
 
 	_serverCommands.push_back("SERVER ");
 }

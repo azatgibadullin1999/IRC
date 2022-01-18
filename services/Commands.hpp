@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 18:32:23 by root              #+#    #+#             */
-/*   Updated: 2022/01/17 14:56:19 by root             ###   ########.fr       */
+/*   Updated: 2022/01/18 19:18:12 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,10 @@ struct		Commands {
 			REGISTR,
 			LOGIN,
 			COMMAND_NOT_FOUND,
+			OPER,
+			KICK,
+			KILL,
+			DIE,
 		} ;
 
 		enum ServerCommandType {

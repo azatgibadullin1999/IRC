@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:20:11 by zera              #+#    #+#             */
-/*   Updated: 2022/01/17 15:49:28 by root             ###   ########.fr       */
+/*   Updated: 2022/01/18 18:53:04 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class Client
 		unsigned int	_idRequest;
 		bool			_loginStatus;
 		bool			_operatorStatus;
+		bool			_privileged;
 
 
 	public :
@@ -70,6 +71,10 @@ class Client
 		void				loginIn(unsigned long newSocket) ;
 
 		void				loginOut() ;
+
+		bool				isPrivileged() const ;
+
+		void				becomePrivileged() ;
 
 		void	addRequest(ClientRequest *request) ;
 

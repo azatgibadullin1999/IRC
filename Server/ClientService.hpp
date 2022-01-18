@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:16:51 by zera              #+#    #+#             */
-/*   Updated: 2022/01/17 19:17:41 by root             ###   ########.fr       */
+/*   Updated: 2022/01/18 19:28:00 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,11 @@ class ClientService
 				void	Register(std::vector<Client> &clients, const Response &response) ;
 				void	login(std::vector<Client> &clients, const Response &response) ;
 				void	commandNotFound(std::vector<Client> &clients, const Response &response) ;
+					//	execute to operator
+				void	oper(std::vector<Client> &clients, const Response &response) ;
+				void	kick(std::vector<Client> &clients, const Response &response) ;
+				void	kill(std::vector<Client> &clients, const Response &response) ;
+				void	die(std::vector<Client> &clients, const Response &response) ;
 					//	Check execute to client
 				Commands::Status	checkMessage(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 				Commands::Status	checkPrivateMessage(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
@@ -65,6 +70,11 @@ class ClientService
 				Commands::Status	checkRegister(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 				Commands::Status	checkLogin(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 				Commands::Status	checkCommandNotFound(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+					// Check execute to operator
+				Commands::Status	checkOper(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkKick(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkKill(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkDie(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 
 			private :
 					//	Utils
@@ -79,8 +89,8 @@ class ClientService
 
 
 		Methods					_methods;
-		__funcExec				_funcExec[12];
-		__funcCheck				_funcCheck[12];
+		__funcExec				_funcExec[16];
+		__funcCheck				_funcCheck[16];
 		std::vector<Client>		_clients;
 	
 	public :
@@ -118,6 +128,8 @@ class ClientService
 		std::vector<Client>::iterator	__findeClient(unsigned int socket, FindeSocket) ;
 
 		std::vector<Client>::iterator	__findeClient(const std::string &nickName) ;
+
+		void	__functionPointerInit() ;
 
 };
 
