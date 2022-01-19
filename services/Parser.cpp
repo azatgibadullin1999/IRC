@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 17:16:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/18 21:49:55 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/19 21:17:36 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,11 @@ ServerMessage		*Parser::generateServerMessage(const ClientRequest &processedReqe
 	Commands::ClientCommandType		clientCommandType;
 	std::vector<std::string>		requestData;
 
-	__createServerReqeustByClientRequest(processedReqeust, serverCommandType, clientCommandType, requestData);
+	__createServerReqeustByClientRequest(
+		processedReqeust,
+		serverCommandType,
+		clientCommandType,
+		requestData);
 
 	return new ServerMessage(serverCommandType, processedReqeust.getCommand(), requestData, processedReqeust.getUID().toString());
 }
@@ -125,14 +129,12 @@ void		Parser::__createServerReqeustByServerMessage(const std::string &rawRequest
 		posEnd = rawRequest.size();
 	for (size_t bufpos = posBegin; bufpos < posEnd;) {
 		posBegin = bufpos;
-		while (isprint(rawRequest[bufpos])
-				&& !isspace(rawRequest[bufpos])
+		while (rawRequest[bufpos] != '\r'
 				&& bufpos < posEnd) { ++bufpos; }
 
 		requestData.push_back(std::string(&rawRequest[posBegin], bufpos - posBegin));
 
-		while ((!isprint(rawRequest[bufpos])
-				|| isspace(rawRequest[bufpos]))
+		while (rawRequest[bufpos] == '\r'
 				&& bufpos < posEnd) { ++bufpos; }
 	}
 

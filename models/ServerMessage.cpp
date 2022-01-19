@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerMessage.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:40:47 by root              #+#    #+#             */
-/*   Updated: 2022/01/18 21:36:13 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/19 21:15:04 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,8 +124,8 @@ const std::string		ServerMessage::toString() const {
 	std::vector<std::string>::const_iterator	it = _clientArgs.begin();
 	
 	for (; it != _clientArgs.end(); it++)
-		dst += *it + " ";
-	
+		dst += *it + "\r";
+
 	dst += "] " + _uid.toString() + "\n";
 	
 	return dst;
