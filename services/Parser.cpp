@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 17:16:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/16 20:03:39 by root             ###   ########.fr       */
+/*   Updated: 2022/01/18 21:49:55 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ ServerMessage		*Parser::generateServerMessage(const std::string &rawRequest) {
 	std::string						password;
 	Commands::ServerCommandType		serverCommandType;
 	Commands::ClientCommandType		clientCommandType;
+	Commands::Status				status;
 	std::vector<std::string>		requestData;
 	std::string						uid;
 
@@ -47,10 +48,14 @@ ServerMessage		*Parser::generateServerMessage(const std::string &rawRequest) {
 		password,
 		serverCommandType,
 		clientCommandType,
+		status,
 		requestData,
 		uid);
-
-	return new ServerMessage(password, serverCommandType, clientCommandType, requestData, uid);
+	if (serverCommandType == Commands::RESPONSE || serverCommandType == Commands::RESPONSE_CONNECT) {
+		return new ServerMessage(password, serverCommandType, status, requestData, uid);
+	} else {
+		return new ServerMessage(password, serverCommandType, clientCommandType, requestData, uid);
+	}
 }
 
 ServerMessage		*Parser::generateServerMessage(const ClientRequest &processedReqeust) {
@@ -91,6 +96,7 @@ void		Parser::__createServerReqeustByServerMessage(const std::string &rawRequest
 						std::string &password,
 						Commands::ServerCommandType &serverCommandType,
 						Commands::ClientCommandType &clientCommandType,
+						Commands::Status &status,
 						std::vector<std::string> &requestData,
 						std::string &uid) const {
 	size_t		posBegin;
@@ -104,9 +110,15 @@ void		Parser::__createServerReqeustByServerMessage(const std::string &rawRequest
 	posEnd = rawRequest.find(' ', posBegin);
 	serverCommandType = static_cast<Commands::ServerCommandType>(atoll(&rawRequest[posBegin]));
 
-	posBegin = posEnd + 1;
-	posEnd = rawRequest.find(' ', posBegin);
-	clientCommandType = static_cast<Commands::ClientCommandType>(atoll(&rawRequest[posBegin]));
+	if (serverCommandType == Commands::RESPONSE || serverCommandType == Commands::RESPONSE_CONNECT) {
+		posBegin = posEnd + 1;
+		posEnd = rawRequest.find(' ', posBegin);
+		status = static_cast<Commands::Status>(atoll(&rawRequest[posBegin]));
+	} else {
+		posBegin = posEnd + 1;
+		posEnd = rawRequest.find(' ', posBegin);
+		clientCommandType = static_cast<Commands::ClientCommandType>(atoll(&rawRequest[posBegin]));
+	}
 
 	posBegin = rawRequest.find_first_of('[') + 1;
 	if ((posEnd = rawRequest.find_last_of(']')) == std::string::npos)
