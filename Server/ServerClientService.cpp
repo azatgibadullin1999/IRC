@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/08 11:27:01 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 21:05:04 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/19 15:52:29 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ Response	*ServerClientService::addRequest(int socket, ServerMessage *request, Re
 				return response;
 			} else {
 				_ourMessages.push_back(request);
-				// save response
+				request->setClientServiceResponse(response);
 				request->setNumberOfWaitResponses(_serverClients.size());
 				for (std::vector<ServerClient*>::iterator serverClient = _serverClients.begin();
 					serverClient < _serverClients.end(); serverClient++) {
@@ -42,14 +42,13 @@ Response	*ServerClientService::addRequest(int socket, ServerMessage *request, Re
 			}
 		} else {
 			// From server add to ServerClient requests
-			if (response->getCommandStatus() != Commands::SUCCESS_SEND) {
+			if (response->getCommandStatus() != Commands::SUCCESS_SEND || _serverClients.size() < 2) {
 				sender->getMsgToSend()->push_back(new ServerMessage(sender->getPassword(), Commands::RESPONSE,
-					response->getClientCommand(), response->getArguments(), response->getUID().toString()));
+					response->getCommandStatus(), response->getArguments(), response->getUID().toString()));
 				delete request;
-				delete response;
 			} else {
 				sender->getRequests()->push_back(request);
-				// save response
+				request->setClientServiceResponse(response);
 				request->setNumberOfWaitResponses(_serverClients.size() - 1);
 				for (std::vector<ServerClient*>::iterator serverClient = _serverClients.begin();
 					serverClient < _serverClients.end(); serverClient++) {
@@ -111,7 +110,7 @@ void	ServerClientService::inBoxMsg(int socket, ServerMessage *serverMessage) {
 void	ServerClientService::setFds(fd_set &writeFds) {
 	for (std::vector<ServerClient*>::iterator client = _serverClients.begin();
 			client < _serverClients.end(); client++) {
-		if(!(*client)->getMsgToSend()->empty()) {
+		if ((*client)->getMsgToSend()->size() != 0) {
 			FD_SET((*client)->getSocket(), &writeFds);
 		}
 	}
@@ -131,9 +130,22 @@ void		ServerClientService::sendServerMsg(int socket) {
 }
 
 Response	*ServerClientService::_execudeRequest(std::vector<ServerMessage*>::iterator &request) {
+	// Наш
+	ServerMessage *rq = *request;
+
+	for (std::vector<ServerMessage *>::iterator response = rq->getResponses().begin();
+		 response < rq->getResponses().end(); response++) {
+		if ((*response)->getStatus() == Commands::ERROR || (*response)->getStatus() == Commands::FAIL) {
+			return new Response((*response)->getClientArgs(), rq->getUID(), (*response)->getStatus(), rq->getClientCommand());
+		}
+	}
+	Response *response = new Response(rq->getClientServiceResponse()->getArguments(),
+										rq->getUID(),
+										rq->getClientServiceResponse()->getCommandStatus(),
+										rq->getClientServiceResponse()->getClientCommand());
 	delete *request;
 	_ourMessages.erase(request);
-	return NULL;
+	return response;
 }
 
 void		ServerClientService::_execudeRequest(ServerClient *serverClient, std::vector<ServerMessage*>::iterator &request) {

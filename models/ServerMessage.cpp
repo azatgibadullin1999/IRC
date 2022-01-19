@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerMessage.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:40:47 by root              #+#    #+#             */
-/*   Updated: 2022/01/16 20:07:06 by root             ###   ########.fr       */
+/*   Updated: 2022/01/18 21:36:13 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,18 @@ ServerMessage::ServerMessage(
 		_password(password),
 		_serverCommandType(serverCommandType),
 		_clientCommandType(clientCommandType),
+		_clientArgs(clientArgs),
+		_uid(uid) { }
+
+ServerMessage::ServerMessage(
+	const std::string &password,
+	const Commands::ServerCommandType &serverCommandType,
+	const Commands::Status &status,
+	const std::vector<std::string> &clientArgs,
+	const std::string &uid) :
+		_password(password),
+		_serverCommandType(serverCommandType),
+		_status(status),
 		_clientArgs(clientArgs),
 		_uid(uid) { }
 
@@ -64,8 +76,16 @@ const Commands::ClientCommandType		&ServerMessage::getClientCommand() const {
 	return _clientCommandType;
 }
 
+const Commands::Status					&ServerMessage::getStatus() const {
+	return _status;
+}
+
 const std::vector<std::string>			&ServerMessage::getClientArgs() const {
 	return _clientArgs;
+}
+
+std::vector<ServerMessage *>			&ServerMessage::getResponses() {
+	return _response;
 }
 
 const UID							&ServerMessage::getUID() const {
@@ -94,7 +114,12 @@ bool		ServerMessage::addResponse(ServerMessage *response) {
 const std::string		ServerMessage::toString() const {
 	std::string		dst;
 
-	dst += "SERVER " + _password + " " + ft::to_string(_serverCommandType) + " " + ft::to_string(_clientCommandType) + " " + "[";
+	dst += "SERVER " + _password + " " + ft::to_string(_serverCommandType) + " ";
+	if (_serverCommandType == Commands::RESPONSE || _serverCommandType == Commands::RESPONSE_CONNECT) {
+		dst += ft::to_string(_status) + " " + "[";
+	} else {
+		dst += ft::to_string(_clientCommandType) + " " + "[";
+	}
 	
 	std::vector<std::string>::const_iterator	it = _clientArgs.begin();
 	

@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 16:48:16 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 23:32:37 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/19 16:47:23 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void						ConnectionsService::setFds(fd_set &readFds, fd_set &writeFds) {
 	for (std::vector<Connection*>::iterator connection = _connections.begin();
 		 connection < _connections.end(); connection++) {
 		FD_SET((*connection)->getSocket(), &readFds);
-		if (!(*connection)->getResponses().empty()) {
+		if ((*connection)->getResponses().size() != 0) {
 			FD_SET((*connection)->getSocket(), &writeFds);
 		}
 	}
@@ -43,6 +43,34 @@ std::string					ConnectionsService::addRequest(int socket, std::string rq) {
 		}
 	}
 	return ("");
+}
+
+bool						ConnectionsService::addRegistrationRequest(int socket, ClientRequest *rq) {
+	Connection *connection = _getConnection(socket);
+	std::cout << "Set rq uid in connection service" << rq->getUID().toString();
+	if (connection != NULL) {
+		connection->setClientRequest(rq);
+	}
+	return false;
+}
+
+int							ConnectionsService::checkClientRequest(const UID &uid) {
+	std::cout << "---START---" << std::endl;
+	for (std::vector<Connection*>::iterator connection = _connections.begin();
+		 connection < _connections.end(); connection++) {
+		if ((*connection)->getClientRequest() != NULL) {
+			if ((*connection)->getClientRequest()->getUID() == uid) {
+				std::cout << (*connection)->getSocket() << "UID " << (*connection)->getClientRequest()->getUID().toString() << " = " << uid.toString() << std::endl;
+				delete (*connection)->getClientRequest();
+				(*connection)->setClientRequest(NULL);
+				(*connection)->setType(Connection::CLIENT);
+				std::cout << "---END---" << std::endl;
+				return (*connection)->getSocket();
+			}
+		}
+	}
+	std::cout << "---END---" << std::endl;
+	return 0;
 }
 
 void						ConnectionsService::addConnection(int socket) {

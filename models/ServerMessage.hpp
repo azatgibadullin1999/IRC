@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerMessage.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 20:36:13 by root              #+#    #+#             */
-/*   Updated: 2022/01/16 20:06:32 by root             ###   ########.fr       */
+/*   Updated: 2022/01/18 16:45:39 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <string>
 # include <exception>
 # include "../services/Commands.hpp"
+# include "Response.hpp"
 # include "UID.hpp"
 
 
@@ -38,11 +39,13 @@ class ServerMessage {
 		std::string						_password;
 		Commands::ServerCommandType		_serverCommandType;
 		Commands::ClientCommandType		_clientCommandType;
+		Commands::Status				_status;
 		std::vector<std::string>		_clientArgs;
 		UID								_uid;
 
 		unsigned int					_numberOfWaitResponses;
 		std::vector<ServerMessage *>	_response;
+		Response						*_clientServiceResponse;
 
 
 	public:
@@ -65,6 +68,12 @@ class ServerMessage {
 					const Commands::ClientCommandType &clientCommandType,
 					const std::vector<std::string> &clientArgs,
 					const std::string &uid) ;
+		
+		ServerMessage(const std::string &password,
+					const Commands::ServerCommandType &serverCommandType,
+					const Commands::Status &status,
+					const std::vector<std::string> &clientArgs,
+					const std::string &uid) ;
 
 		ServerMessage(const std::string &passwordToConnect,
 					const Commands::ServerCommandType &command,
@@ -80,9 +89,17 @@ class ServerMessage {
 
 		const Commands::ClientCommandType		&getClientCommand() const ;
 
+		const Commands::Status					&getStatus() const ;
+
 		const std::vector<std::string>			&getClientArgs() const ;
 
+		std::vector<ServerMessage *>			&getResponses() ;
+
 		const UID							&getUID() const ;
+
+		Response							*getClientServiceResponse() { return _clientServiceResponse; }
+
+		void								setClientServiceResponse(Response *response) { _clientServiceResponse = response; }
 
 		bool		isServerConnectCommand() const ;
 
