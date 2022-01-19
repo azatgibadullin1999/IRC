@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/19 16:39:52 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/19 19:47:37 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ void	Server::connectionReadEvent(int fd, std::string &rawRq) {
 					}
 				} else if (resp->getCommandStatus() == Commands::FAIL || resp->getCommandStatus() == Commands::ERROR) {
 					// Не прошёл проверку
-					_connectionsService.addResponse(fd, "[SERVER] invalid arguments");
+					_connectionsService.addResponse(fd, "[SERVER] invalid arguments\n");
 					delete resp;
 					delete clientRequest;
 					// Error нужно зарегаться или залогиниться
@@ -170,21 +170,25 @@ void		Server::serverClientReadEvent(int fd, std::string &rawRq) {
 			ServerMessage *serverMsg = _parser.generateServerMessage(rawRq);
 			Response *resp;
 			if (serverMsg->getServerCommand() == Commands::REQUEST) {
-				std::cout << "Args " << serverMsg->getClientArgs().size() << std::endl;
+				std::cout << "ServerRequest:\n\"" << serverMsg->toString() << "\"" << std::endl;
 				ClientRequest *clientRequest = new ClientRequest(serverMsg->getClientArgs(),
 											 serverMsg->getClientCommand(), serverMsg->getUID());
 				resp = _clientService.checkToExecute(clientRequest);
 				_serverClientService.addRequest(fd, serverMsg, resp);
 			} else if (serverMsg->getServerCommand() == Commands::RESPONSE) {
-				std::cout << "Drugoi servak otpravil:\n\"" << serverMsg->toString() << "\""<< std::endl;
+				std::cout << "ServerResponse:\n\"" << serverMsg->toString() << "\""<< std::endl;
 				std::cout << "Server service obrabativaet response" << std::endl;
 				resp = _serverClientService.addResponse(serverMsg);
-				std::cout << "Obraotal" << std::endl;
-				std::cout << resp->getClientCommand() << std::endl;
+				std::cout << "Obrabotal" << std::endl;
 				if (resp != NULL) {
 					if (int clientFD = _connectionsService.checkClientRequest(resp->getUID())) {
-						std::cout << "Register client service" << std::endl;
-						_clientService.registrClient(clientFD, resp);
+						if (resp->getCommandStatus() == Commands::SUCCESS_SEND){
+							std::cout << "Register client service" << std::endl;
+							_connectionsService.setTypeConnection(clientFD, Connection::CLIENT);
+							_clientService.registrClient(clientFD, resp);
+						} else {
+							_connectionsService.addResponse(clientFD, "That User already exists\n");
+						}
 					} else {
 						std::cout << "Execute client service" << std::endl;
 						_clientService.execute(resp);
@@ -222,9 +226,9 @@ void Server::sendEvent(int sock) {
 		_serverClientService.sendServerMsg(sock);
 	} else if (_connectionsService.getTypeConnection(sock) == Connection::CLIENT) {
 		_clientService.sendResponseToClient(sock);
-	} else if (_connectionsService.getTypeConnection(sock) == Connection::NONE) {
-		_connectionsService.sendMsg(sock);
 	}
+	// } else if (_connectionsService.getTypeConnection(sock) == Connection::NONE) {
+		_connectionsService.sendMsg(sock);
 	FD_CLR(sock, &_writeFds);
 }
 
