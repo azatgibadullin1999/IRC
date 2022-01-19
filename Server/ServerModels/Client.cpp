@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:39:00 by root              #+#    #+#             */
-/*   Updated: 2022/01/17 19:32:08 by root             ###   ########.fr       */
+/*   Updated: 2022/01/18 18:53:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ Client::Client(unsigned long socket, const std::string &login, const std::string
 	_userId(socket),
 	_chanel("Hub"),
 	_idRequest(0),
-	_loginStatus(true) { }
+	_loginStatus(true),
+	_privileged(false) { }
 
 Client::~Client(void) {
 	__deleteRequests();
@@ -40,7 +41,6 @@ unsigned int	Client::getIdRequest() {
 }
 
 void	Client::addRequest(ClientRequest *request) {
-	++_idRequest;
 	requests.push_back(request);
 }
 
@@ -92,9 +92,17 @@ void				Client::loginIn(unsigned long newSocket) {
 
 void				Client::loginOut() {
 	_loginStatus = false;
+	_privileged = false;
 	_socket = -1;
 }
 
+bool				Client::isPrivileged() const {
+	return _privileged;
+}
+
+void				Client::becomePrivileged() {
+	_privileged = true;
+}
 
 std::vector<ClientRequest*>::iterator	Client::findeReqeust(const UID &uid) {
 	std::vector<ClientRequest*>::iterator	it = requests.begin();
