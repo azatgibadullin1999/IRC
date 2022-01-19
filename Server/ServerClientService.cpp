@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/08 11:27:01 by zera              #+#    #+#             */
-/*   Updated: 2022/01/19 15:52:29 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/19 20:57:22 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ Response	*ServerClientService::addRequest(int socket, ServerMessage *request, Re
 				request->setNumberOfWaitResponses(_serverClients.size());
 				for (std::vector<ServerClient*>::iterator serverClient = _serverClients.begin();
 					serverClient < _serverClients.end(); serverClient++) {
+					request->setPassword((*serverClient)->getPassword());
 					(*serverClient)->getMsgToSend()->push_back(request);
 				}
 			}
@@ -53,6 +54,7 @@ Response	*ServerClientService::addRequest(int socket, ServerMessage *request, Re
 				for (std::vector<ServerClient*>::iterator serverClient = _serverClients.begin();
 					serverClient < _serverClients.end(); serverClient++) {
 					if ((*serverClient) != sender) {
+						request->setPassword((*serverClient)->getPassword());
 						(*serverClient)->getMsgToSend()->push_back(request);
 					}
 				}
@@ -139,10 +141,32 @@ Response	*ServerClientService::_execudeRequest(std::vector<ServerMessage*>::iter
 			return new Response((*response)->getClientArgs(), rq->getUID(), (*response)->getStatus(), rq->getClientCommand());
 		}
 	}
-	Response *response = new Response(rq->getClientServiceResponse()->getArguments(),
-										rq->getUID(),
-										rq->getClientServiceResponse()->getCommandStatus(),
-										rq->getClientServiceResponse()->getClientCommand());
+	Response *response;
+	if (rq->getClientCommand() == Commands::LIST || rq->getClientCommand() == Commands::WHO) {
+		std::vector<std::string> list = rq->getClientServiceResponse()->getArguments();
+		std::vector<ServerMessage*>::const_iterator            response = rq->getResponses().begin();
+		std::vector<std::string>::const_iterator            newElement;
+
+		for (; response != rq->getResponses().end(); response++) {
+			newElement = (*response)->getClientArgs().begin();
+			for (; newElement != (*response)->getClientArgs().end(); newElement++) {
+				for (std::vector<std::string>::const_iterator checkElement = list.begin();
+					 checkElement < list.end(); checkElement++) {
+					if ((*checkElement) == (*newElement)) {
+						break;
+					} else if (checkElement + 1 == list.end()) {
+						list.push_back(*newElement);
+					}
+				}
+			}
+		}
+		
+	} else {
+		response = new Response(rq->getClientServiceResponse()->getArguments(),
+											rq->getUID(),
+											rq->getClientServiceResponse()->getCommandStatus(),
+											rq->getClientServiceResponse()->getClientCommand());
+	}
 	delete *request;
 	_ourMessages.erase(request);
 	return response;

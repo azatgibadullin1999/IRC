@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 16:48:16 by zera              #+#    #+#             */
-/*   Updated: 2022/01/19 16:47:23 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/19 19:46:45 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ int							ConnectionsService::checkClientRequest(const UID &uid) {
 				std::cout << (*connection)->getSocket() << "UID " << (*connection)->getClientRequest()->getUID().toString() << " = " << uid.toString() << std::endl;
 				delete (*connection)->getClientRequest();
 				(*connection)->setClientRequest(NULL);
-				(*connection)->setType(Connection::CLIENT);
 				std::cout << "---END---" << std::endl;
 				return (*connection)->getSocket();
 			}
