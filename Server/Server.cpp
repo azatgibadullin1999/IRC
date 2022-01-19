@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/17 19:48:35 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/19 16:39:52 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void	Server::connectionReadEvent(int fd, std::string &rawRq) {
 							_clientService.loginClient(fd, resp);
 						}
 					} else {
-						// добавить реквест коннектиону
+						_connectionsService.addRegistrationRequest(fd, clientRequest);
 					}
 				} else if (resp->getCommandStatus() == Commands::FAIL || resp->getCommandStatus() == Commands::ERROR) {
 					// Не прошёл проверку
@@ -176,9 +176,19 @@ void		Server::serverClientReadEvent(int fd, std::string &rawRq) {
 				resp = _clientService.checkToExecute(clientRequest);
 				_serverClientService.addRequest(fd, serverMsg, resp);
 			} else if (serverMsg->getServerCommand() == Commands::RESPONSE) {
+				std::cout << "Drugoi servak otpravil:\n\"" << serverMsg->toString() << "\""<< std::endl;
+				std::cout << "Server service obrabativaet response" << std::endl;
 				resp = _serverClientService.addResponse(serverMsg);
+				std::cout << "Obraotal" << std::endl;
+				std::cout << resp->getClientCommand() << std::endl;
 				if (resp != NULL) {
-					_clientService.execute(resp);
+					if (int clientFD = _connectionsService.checkClientRequest(resp->getUID())) {
+						std::cout << "Register client service" << std::endl;
+						_clientService.registrClient(clientFD, resp);
+					} else {
+						std::cout << "Execute client service" << std::endl;
+						_clientService.execute(resp);
+					}
 				}
 			} else if (serverMsg->getServerCommand() == Commands::RESPONSE_CONNECT) {
 				// Пока ничего(
@@ -191,6 +201,7 @@ void		Server::serverClientReadEvent(int fd, std::string &rawRq) {
 void		Server::clientReadEvent(int fd, std::string &rawRq) {
 	try {
 		// клиент гет идреквест
+		std::cout << "Client rq" << std::endl;
 		UID		uid = UID(atoll(_serverSettings->getPort().c_str()), _clientService.getUserId(fd), _clientService.getIdRequest(fd));
 		ClientRequest *clientRequest = _parser.generateClientRequest(rawRq, uid);
 		_clientService.addRequest(fd, clientRequest);

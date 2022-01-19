@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 16:18:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/17 14:16:16 by root             ###   ########.fr       */
+/*   Updated: 2022/01/19 13:49:11 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,10 @@ Commands::ClientCommandType		Response::getClientCommand() const {
 
 const std::vector<std::string>	&Response::getArguments() const {
 	return _requestData;
+}
+
+void			Response::setClientCommand(Commands::ClientCommandType type) {
+	_clientCommand = type;
 }
 
 std::string		Response::toString() const {

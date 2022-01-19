@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 13:35:05 by zera              #+#    #+#             */
-/*   Updated: 2022/01/16 23:26:50 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/19 15:46:08 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,10 @@ class ConnectionsService
 		void						setFds(fd_set &readFds, fd_set &writeFds);
 
 		std::string					addRequest(int socket, std::string rq);
+
+		bool						addRegistrationRequest(int socket, ClientRequest *rq);
+
+		int							checkClientRequest(const UID &uid);
 
 		void						addConnection(int socket);
 

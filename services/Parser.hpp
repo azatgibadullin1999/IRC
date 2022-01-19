@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 13:01:26 by root              #+#    #+#             */
-/*   Updated: 2022/01/16 20:03:17 by root             ###   ########.fr       */
+/*   Updated: 2022/01/18 21:37:41 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ class Parser {
 						std::string &password,
 						Commands::ServerCommandType &serverCommandType,
 						Commands::ClientCommandType &clientCommandType,
+						Commands::Status &status,
 						std::vector<std::string> &requestData,
 						std::string &uid) const ;
 
