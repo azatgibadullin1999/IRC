@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientService.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:16:51 by zera              #+#    #+#             */
-/*   Updated: 2022/01/18 19:28:00 by root             ###   ########.fr       */
+/*   Updated: 2022/01/21 01:30:49 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 # include <utility>
 # include "ServerModels/Client.hpp"
 # include "../models/ClientRequest.hpp"
-# include "../models/ServerMessage.hpp"
 # include "../models/Response.hpp"
 
 class Methods;

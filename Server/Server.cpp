@@ -6,14 +6,13 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/19 19:47:37 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/21 01:46:41 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
 ClientService				Server::_clientService = ClientService();
-ServerClientService			Server::_serverClientService = ServerClientService();
 Parser						Server::_parser = Parser();
 ConnectionsService			Server::_connectionsService = ConnectionsService();
 
@@ -21,15 +20,7 @@ ConnectionsService			Server::_connectionsService = ConnectionsService();
 Server::Server(ServerSettings * settings) :
 	_serverSettings(settings),
 	_serverSocket(ServerSocket(_serverSettings->getPort())),
-	_fdMax(0) {
-		if (_serverSettings->haveConnection()){
-			int socketConnection = _connectionsService.addConnection(_serverSettings->getHostConnection(), _serverSettings->getPortConnection());
-			_serverClientService.addServerClient(socketConnection);
-			_serverClientService.sendConnectionRequest(socketConnection,
-				new ServerMessage(_serverSettings->getPasswordConnection(), Commands::REQUEST_CONNECT, _serverSettings->getPassword()));
-			_fdMax = std::max(socketConnection, _fdMax);
-		}
-	}
+	_fdMax(0) {	}
 
 void	Server::run () {
 	std::cout << "Starting..." << _serverSocket.getSocket() << std::endl;
@@ -51,7 +42,6 @@ void	Server::setFds(fd_set &readFds, fd_set &writeFds) {
 	FD_ZERO(&writeFds);
 	_connectionsService.setFds(readFds, writeFds);
 	FD_SET(_serverSocket.getSocket(), &readFds);
-	_serverClientService.setFds(writeFds);
 	_clientService.setFds(writeFds);
 }
 
@@ -59,7 +49,7 @@ void	Server::setFds(fd_set &readFds, fd_set &writeFds) {
 void	Server::checkStatusReadFd(fd_set &readFds, fd_set &writeFds) {
 	if (FD_ISSET(_serverSocket.getSocket(), &readFds))
 		connectEvent();
-	for (unsigned long fd = 4; fd <= _fdMax; fd++) {
+	for (int fd = 4; fd <= _fdMax; fd++) {
 		if (FD_ISSET(fd, &readFds)) {
 			readEvent(fd);
 		}
@@ -101,8 +91,6 @@ void Server::readEvent(int fd) {
 	}
 	if (_connectionsService.getTypeConnection(fd) == Connection::NONE) {
 		connectionReadEvent(fd, rawRq);
-	} else if (_connectionsService.getTypeConnection(fd) == Connection::SERVER) {
-		serverClientReadEvent(fd, rawRq);
 	} else if (_connectionsService.getTypeConnection(fd) == Connection::CLIENT) {
 		clientReadEvent(fd, rawRq);
 	}
@@ -110,111 +98,42 @@ void Server::readEvent(int fd) {
 }
 
 void	Server::connectionReadEvent(int fd, std::string &rawRq) {
-	if (_parser.isServerMessage(rawRq)) {
-		try {
-			ServerMessage *serverMsg = _parser.generateServerMessage(rawRq);
-
-			if (serverMsg->getServerCommand() == Commands::REQUEST_CONNECT) {
-				if (serverMsg->getPassword() == _serverSettings->getPassword()) {
-					_connectionsService.setTypeConnection(fd, Connection::SERVER);
-					_serverClientService.addServerClient(fd);
-					_serverClientService.addConnectionRequest(fd, serverMsg);
+	// Connection idReq
+	UID		uid = UID(atoll(_serverSettings->getPort().c_str()), fd, 0);
+	try {
+		ClientRequest *clientRequest = _parser.generateClientRequest(rawRq, uid);
+		if (clientRequest->getCommand() == Commands::REGISTR || 
+			clientRequest->getCommand() == Commands::LOGIN) {
+			Response *resp = _clientService.checkToExecute(clientRequest);
+			if (resp->getCommandStatus() == Commands::SUCCESS) {
+				_connectionsService.setTypeConnection(fd, Connection::CLIENT);
+				if (clientRequest->getCommand() == Commands::REGISTR) {
+					_clientService.registrClient(fd, resp);
+				} else if (clientRequest->getCommand() == Commands::LOGIN) {
+					_clientService.loginClient(fd, resp);
 				}
+			} else if (resp->getCommandStatus() == Commands::FAIL || resp->getCommandStatus() == Commands::ERROR) {
+				_connectionsService.addResponse(fd, "[SERVER] invalid arguments or this user already exists\n");
 			}
-		} catch (std::exception &e) {
-			// Error e.what
+			delete resp;
+		} else {
+			_connectionsService.addResponse(fd, "[SERVER] you need to /LOGIN or /REGISTER\n");
 		}
-	} else {
-		// Connection idReq
-		UID		uid = UID(atoll(_serverSettings->getPort().c_str()), fd, 0);
-		try {
-			ClientRequest *clientRequest = _parser.generateClientRequest(rawRq, uid);
-			if (clientRequest->getCommand() == Commands::REGISTR || 
-				clientRequest->getCommand() == Commands::LOGIN) {
-				Response *resp = _clientService.checkToExecute(clientRequest);
-				if (resp->getCommandStatus() == Commands::SUCCESS_SEND || resp->getCommandStatus() == Commands::SUCCESS_NO_SEND) {
-					resp = _serverClientService.addRequest(fd,
-							_parser.generateServerMessage(*clientRequest), resp);
-					if (resp != NULL) {
-						// Если серверов нет и всё гуд
-						_connectionsService.setTypeConnection(fd, Connection::CLIENT);
-						if (clientRequest->getCommand() == Commands::REGISTR) {
-							_clientService.registrClient(fd, resp);
-						} else if (clientRequest->getCommand() == Commands::LOGIN) {
-							_clientService.loginClient(fd, resp);
-						}
-					} else {
-						_connectionsService.addRegistrationRequest(fd, clientRequest);
-					}
-				} else if (resp->getCommandStatus() == Commands::FAIL || resp->getCommandStatus() == Commands::ERROR) {
-					// Не прошёл проверку
-					_connectionsService.addResponse(fd, "[SERVER] invalid arguments\n");
-					delete resp;
-					delete clientRequest;
-					// Error нужно зарегаться или залогиниться
-				}
-			} else {
-				delete clientRequest;
-				_connectionsService.addResponse(fd, "[SERVER] you need to /LOGIN or /REGISTER\n");
-				// Error нужно зарегаться или залогиниться
-			}
-		} catch (std::exception &e) {
-			_connectionsService.addResponse(fd, e.what());
-			// Error e.what
-		}
+		delete clientRequest;
+	} catch (std::exception &e) {
+		_connectionsService.addResponse(fd, e.what());
 	}
-}
-
-void		Server::serverClientReadEvent(int fd, std::string &rawRq) {
-		try {
-			ServerMessage *serverMsg = _parser.generateServerMessage(rawRq);
-			Response *resp;
-			if (serverMsg->getServerCommand() == Commands::REQUEST) {
-				std::cout << "ServerRequest:\n\"" << serverMsg->toString() << "\"" << std::endl;
-				ClientRequest *clientRequest = new ClientRequest(serverMsg->getClientArgs(),
-											 serverMsg->getClientCommand(), serverMsg->getUID());
-				resp = _clientService.checkToExecute(clientRequest);
-				_serverClientService.addRequest(fd, serverMsg, resp);
-			} else if (serverMsg->getServerCommand() == Commands::RESPONSE) {
-				std::cout << "ServerResponse:\n\"" << serverMsg->toString() << "\""<< std::endl;
-				std::cout << "Server service obrabativaet response" << std::endl;
-				resp = _serverClientService.addResponse(serverMsg);
-				std::cout << "Obrabotal" << std::endl;
-				if (resp != NULL) {
-					if (int clientFD = _connectionsService.checkClientRequest(resp->getUID())) {
-						if (resp->getCommandStatus() == Commands::SUCCESS_SEND){
-							std::cout << "Register client service" << std::endl;
-							_connectionsService.setTypeConnection(clientFD, Connection::CLIENT);
-							_clientService.registrClient(clientFD, resp);
-						} else {
-							_connectionsService.addResponse(clientFD, "That User already exists\n");
-						}
-					} else {
-						std::cout << "Execute client service" << std::endl;
-						_clientService.execute(resp);
-					}
-				}
-			} else if (serverMsg->getServerCommand() == Commands::RESPONSE_CONNECT) {
-				// Пока ничего(
-			}
-		} catch (std::exception &e) {
-			
-		}
 }
 
 void		Server::clientReadEvent(int fd, std::string &rawRq) {
 	try {
-		// клиент гет идреквест
-		std::cout << "Client rq" << std::endl;
 		UID		uid = UID(atoll(_serverSettings->getPort().c_str()), _clientService.getUserId(fd), _clientService.getIdRequest(fd));
 		ClientRequest *clientRequest = _parser.generateClientRequest(rawRq, uid);
 		_clientService.addRequest(fd, clientRequest);
 		Response *response =_clientService.checkToExecute(clientRequest);
-		ServerMessage *serverMessage = _parser.generateServerMessage(*clientRequest);
-		response = _serverClientService.addRequest(fd, serverMessage, response);
-		if (response != NULL) {
-			_clientService.execute(response);
-		}
+		_clientService.execute(response);
+		delete clientRequest;
+		delete response;
 	} catch (std::exception &e) {
 
 	}
@@ -222,20 +141,9 @@ void		Server::clientReadEvent(int fd, std::string &rawRq) {
 
 void Server::sendEvent(int sock) {
 	std::cout << "Send " << sock << " type " << _connectionsService.getTypeConnection(sock) << std::endl;
-	if (_connectionsService.getTypeConnection(sock) == Connection::SERVER) {
-		_serverClientService.sendServerMsg(sock);
-	} else if (_connectionsService.getTypeConnection(sock) == Connection::CLIENT) {
+	if (_connectionsService.getTypeConnection(sock) == Connection::CLIENT) {
 		_clientService.sendResponseToClient(sock);
 	}
-	// } else if (_connectionsService.getTypeConnection(sock) == Connection::NONE) {
-		_connectionsService.sendMsg(sock);
+	_connectionsService.sendMsg(sock);
 	FD_CLR(sock, &_writeFds);
 }
-
-
-
-// SERVER Password Request CONNECT
-// SERVER Password [NICKNAME Azat] 8080:4:3
-// SERVER Password Response CONNECT
-
-// NICKNAME Azat

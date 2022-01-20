@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 18:32:23 by root              #+#    #+#             */
-/*   Updated: 2022/01/18 19:18:12 by root             ###   ########.fr       */
+/*   Updated: 2022/01/21 01:26:48 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,11 @@ struct		Commands {
 	private :
 	
 		std::vector<std::string>		_clientCommands;
-		std::vector<std::string>		_serverCommands;
 	
 	public :
 
 		enum Status {
-			SUCCESS_SEND,
-			SUCCESS_NO_SEND,
+			SUCCESS,
 			FAIL,
 			ERROR,
 		} ;
@@ -53,20 +51,11 @@ struct		Commands {
 			DIE,
 		} ;
 
-		enum ServerCommandType {
-			REQUEST,
-			RESPONSE,
-			REQUEST_CONNECT,
-			RESPONSE_CONNECT,
-		} ;
-
 		Commands() ;
 
 		~Commands() ;
 
 		ClientCommandType		whichClientCommand(const std::string &str) const ;
-
-		bool					isServerCommand(const std::string &str) const ;
 
 } ;
 
