@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 14:05:54 by zera              #+#    #+#             */
-/*   Updated: 2022/01/18 22:36:28 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/21 01:36:39 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 # include <unistd.h>
 # include <vector>
 # include "../../models/ClientRequest.hpp"
-# include "../../models/ServerMessage.hpp"
 
 
 class Connection
@@ -27,8 +26,7 @@ class Connection
 	public:
 		enum ConnectionType {
 			NONE,
-			CLIENT,
-			SERVER
+			CLIENT
 		};
 		Connection(int socket) {
 			_socket = socket;
@@ -42,10 +40,6 @@ class Connection
 		int					getSocket() { return _socket; }
 		ConnectionType		getType() { return _type; }
 		std::string			getRawRq() { return _rawRq; }
-		ClientRequest		*getClientRequest() { return _clientRq; }
-		ServerMessage		*getServerMessage() { return _serverRq; }
-		void				setClientRequest(ClientRequest *clientRequest) { _clientRq = clientRequest; }
-		void				setServerMessage(ServerMessage *serverMessage) { _serverRq = serverMessage; }
 		std::vector<std::string>	&getResponses() { return _responses; }
 		Connection*			setType(ConnectionType type) {
 			_type = type;
@@ -61,8 +55,6 @@ class Connection
 		int					_socket;
 		ConnectionType		_type;
 		std::string			_rawRq;
-		ClientRequest		*_clientRq;
-		ServerMessage		*_serverRq;
 		std::vector<std::string>	_responses;
 
 };

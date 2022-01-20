@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientService.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:24:58 by root              #+#    #+#             */
-/*   Updated: 2022/01/18 21:38:06 by root             ###   ########.fr       */
+/*   Updated: 2022/01/21 01:47:20 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,19 @@ ClientService::ClientService() : _methods() {
 ClientService::~ClientService() { }
 
 void	ClientService::registrClient(unsigned long socket, Response *response) {
-	if (response->getCommandStatus() == Commands::SUCCESS_SEND) {
+	if (response->getCommandStatus() == Commands::SUCCESS) {
 		_clients.push_back(Client(socket, response->getArguments()[0], response->getArguments()[1]));
 		__findeClient(socket, FindeSocket())->addResponse(ColorMessage::serverPrefixSuccess() + "you have successfully registered\n");
 	}
-	delete response;
 }
 
 void	ClientService::loginClient(unsigned long socket, Response *response) {
-	if (response->getCommandStatus() == Commands::SUCCESS_NO_SEND) {
+	if (response->getCommandStatus() == Commands::SUCCESS) {
 		Client		*cl = __findeClient(response->getArguments()[0]).base();
 
 		cl->loginIn(socket);
 		cl->addResponse(ColorMessage::serverPrefixSuccess() + "you have successfully logged in\n");
 	}
-	delete response;
 }
 
 void	ClientService::disconnectClient(unsigned long socket) {
@@ -109,7 +107,6 @@ void		ClientService::execute(Response *response) {
 	Client *cl = __findeClient(response->getUID().getUserId(), FindeUserId()).base();
 	if (cl == _clients.end().base())
 		cl->deleteRequest(response->getUID());
-	delete response;
 }
 
 
@@ -167,7 +164,7 @@ void	ClientService::Methods::nickName(
 		Client			*cl = __findeClient(clients, response.getUID());
 
 		if (cl != clients.end().base()) {
-			if (response.getCommandStatus() == Commands::SUCCESS_SEND) {
+			if (response.getCommandStatus() == Commands::SUCCESS) {
 				cl->setNickName(response.getArguments()[0]);
 				cl->addResponse(ColorMessage::serverPrefixSuccess() + "your nickname has been changed to : " + cl->getNickName() + "\n");
 			}
@@ -184,7 +181,7 @@ void	ClientService::Methods::join(
 		Client			*cl = __findeClient(clients, response.getUID());
 
 		if (cl != clients.end().base()) {
-			if (response.getCommandStatus() == Commands::SUCCESS_NO_SEND) {
+			if (response.getCommandStatus() == Commands::SUCCESS) {
 				cl->setChanel(response.getArguments()[0]);
 				cl->addResponse(ColorMessage::serverPrefixSuccess() + "your channel has been changed to : " + cl->getChanel() + '\n');
 			}
@@ -224,7 +221,7 @@ void	ClientService::Methods::who(
 		Client			*cl = __findeClient(clients, response.getUID());
 
 		if (cl != clients.end().base()) {
-			if (response.getCommandStatus() == Commands::SUCCESS_SEND)
+			if (response.getCommandStatus() == Commands::SUCCESS)
 				cl->addResponse(response.toList());
 			else
 				cl->addResponse(ColorMessage::serverPrefixFail() + "no such users found\n");
@@ -237,7 +234,7 @@ void	ClientService::Methods::list(
 		Client			*cl = __findeClient(clients, response.getUID());
 
 		if (cl != clients.end().base()) {
-			if (response.getCommandStatus() == Commands::SUCCESS_NO_SEND)
+			if (response.getCommandStatus() == Commands::SUCCESS)
 				cl->addResponse(response.toList());
 			else 
 				cl->addResponse(ColorMessage::serverPrefixFail() + "no channels\n");
@@ -287,7 +284,7 @@ void	ClientService::Methods::oper(
 
 		if (cl == clients.end().base())
 			return ;
-		if ()
+		// if ()
 	}
 
 void	ClientService::Methods::kick(
@@ -329,7 +326,7 @@ Commands::Status	ClientService::Methods::checkMessage(
 		}
 
 		responseArgs = request->getArguments();
-		return Commands::SUCCESS_SEND;
+		return Commands::SUCCESS;
 	}
 
 Commands::Status	ClientService::Methods::checkPrivateMessage(
@@ -349,7 +346,7 @@ Commands::Status	ClientService::Methods::checkPrivateMessage(
 		for (; it != clients.end(); it++) {
 			if (it->getNickName() == request->getArguments()[1]) {
 				responseArgs = request->getArguments();
-				return Commands::SUCCESS_SEND;
+				return Commands::SUCCESS;
 			}
 		}
 		return Commands::FAIL;
@@ -369,7 +366,7 @@ Commands::Status	ClientService::Methods::checkNickName(
 				return Commands::FAIL;
 		}
 		responseArgs.push_back(request->getArguments()[0]);
-		return Commands::SUCCESS_SEND;
+		return Commands::SUCCESS;
 	}
 
 Commands::Status	ClientService::Methods::checkJoin(
@@ -383,21 +380,21 @@ Commands::Status	ClientService::Methods::checkJoin(
 
 		responseArgs.push_back(request->getArguments()[0]);
 
-		return Commands::SUCCESS_NO_SEND;
+		return Commands::SUCCESS;
 	}
 
 Commands::Status	ClientService::Methods::checkLeave(
 	const std::vector<Client> &clients,
 	ClientRequest *request,
 	std::vector<std::string> &responseArgs) {
-		return Commands::SUCCESS_NO_SEND;
+		return Commands::SUCCESS;
 	}
 
 Commands::Status	ClientService::Methods::checkQuit(
 	const std::vector<Client> &clients,
 	ClientRequest *request,
 	std::vector<std::string> &responseArgs) {
-		return Commands::SUCCESS_NO_SEND;
+		return Commands::SUCCESS;
 	}
 
 Commands::Status	ClientService::Methods::checkWho(
@@ -430,7 +427,7 @@ Commands::Status	ClientService::Methods::checkWho(
 		if (responseArgs.empty())
 			return Commands::FAIL;
 		else
-			return Commands::SUCCESS_SEND;
+			return Commands::SUCCESS;
 	}
 
 Commands::Status	ClientService::Methods::checkList(
@@ -454,7 +451,7 @@ Commands::Status	ClientService::Methods::checkList(
 		for (itChannel = responseArgs.begin(); itChannel != responseArgs.end(); itChannel++)
 			*itChannel = ColorMessage::channelPrefix(*itChannel);
 
-		return Commands::SUCCESS_NO_SEND;
+		return Commands::SUCCESS;
 	}
 
 Commands::Status	ClientService::Methods::checkHelp(
@@ -478,7 +475,7 @@ Commands::Status	ClientService::Methods::checkHelp(
 			responseArgs.push_back(" ");
 		}
 
-		return Commands::SUCCESS_NO_SEND;
+		return Commands::SUCCESS;
 	}
 
 Commands::Status	ClientService::Methods::checkRegister(
@@ -496,7 +493,7 @@ Commands::Status	ClientService::Methods::checkRegister(
 		}
 
 		responseArgs = request->getArguments();
-		return Commands::SUCCESS_SEND;
+		return Commands::SUCCESS;
 	}
 
 Commands::Status	ClientService::Methods::checkLogin(
@@ -512,7 +509,7 @@ Commands::Status	ClientService::Methods::checkLogin(
 				&& request->getArguments()[1] == it->getPassword()
 				&& !it->isLogin()) {
 				responseArgs = request->getArguments();
-				return Commands::SUCCESS_NO_SEND;
+				return Commands::SUCCESS;
 			}
 		}
 
@@ -548,7 +545,7 @@ Commands::Status	ClientService::Methods::checkKick(
 		else if (!cl->isPrivileged())
 			return Commands::FAIL;
 		else
-			return Commands::SUCCESS_NO_SEND;
+			return Commands::SUCCESS;
 	}
 
 Commands::Status	ClientService::Methods::checkKill(
@@ -562,7 +559,7 @@ Commands::Status	ClientService::Methods::checkKill(
 		else if (!cl->isPrivileged())
 			return Commands::FAIL;
 		else
-			return Commands::SUCCESS_NO_SEND;
+			return Commands::SUCCESS;
 	}
 
 Commands::Status	ClientService::Methods::checkDie(
@@ -576,7 +573,7 @@ Commands::Status	ClientService::Methods::checkDie(
 		else if (!cl->isPrivileged())
 			return Commands::FAIL;
 		else
-			return Commands::SUCCESS_NO_SEND;
+			return Commands::SUCCESS;
 	}
 
 

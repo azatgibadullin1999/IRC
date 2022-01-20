@@ -3,22 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:39:00 by root              #+#    #+#             */
-/*   Updated: 2022/01/18 18:53:34 by root             ###   ########.fr       */
+/*   Updated: 2022/01/21 01:42:37 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
 Client::Client(unsigned long socket, const std::string &login, const std::string &password) :
-	_socket(socket),
 	_nickName(login),
 	_login(login),
 	_password(password),
-	_userId(socket),
 	_chanel("Hub"),
+	_socket(socket),
+	_userId(socket),
 	_idRequest(0),
 	_loginStatus(true),
 	_privileged(false) { }
@@ -27,7 +27,7 @@ Client::~Client(void) {
 	__deleteRequests();
 }
 
-unsigned long 	Client::getSocket() const {
+int		Client::getSocket() const {
 	return _socket;
 }
 

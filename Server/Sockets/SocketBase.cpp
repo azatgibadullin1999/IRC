@@ -1,7 +1,7 @@
 #include "SocketBase.hpp"
 
 SocketBase::SocketBase(const std::string &domain, const std::string &port) throw(SocketException) {
-	struct addrinfo hints, *rp;
+	struct addrinfo hints;
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_INET;
@@ -37,10 +37,6 @@ void SocketBase::setSocket(int socket) {
 	int yes = 1;
 	int flags;
 
-	// if (bind(getSocket(), _address->ai_addr, _address->ai_addrlen)) {
-	// 	std::cout << "" << std::endl;
-	// 	throw SocketException(strerror(errno));
-	// }
 	if ((flags = fcntl(socket, F_GETFL, 0)) < 0)
 	    throw SocketException("Error F_GETFL");
 	flags |= O_NONBLOCK;

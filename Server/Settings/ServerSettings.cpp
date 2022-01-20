@@ -6,7 +6,7 @@
 /*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/10 11:41:00 by zera              #+#    #+#             */
-/*   Updated: 2022/01/14 15:50:19 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/21 01:39:36 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ ServerSettings::ServerSettings(const std::string connection, const std::string p
 
 void			ServerSettings::_parseConnection(const std::string & connection) {
 	 int count = 0;
-	for (int i = 0; (i = connection.find(':', i)) != std::string::npos; i++) {
+	for (unsigned long i = 0; (i = connection.find(':', i)) != std::string::npos; i++) {
 		count++;
 	}
 	if (count != 2) {
