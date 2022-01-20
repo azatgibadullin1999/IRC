@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 16:18:03 by root              #+#    #+#             */
-/*   Updated: 2022/01/19 13:49:11 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/19 23:50:07 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,43 +47,6 @@ std::string		Response::toString() const {
 	std::vector<std::string>::const_iterator	it = _requestData.begin();
 	std::string		dst;
 
-	for (; it != _requestData.end(); it++)
-		dst += *it + ' ';
-	dst += '\n';
-
-	return dst;
-}
-
-std::string		Response::toList() const {
-	std::vector<std::string>::const_iterator	it = _requestData.begin();
-	std::string		dst;
-
-	dst += ColorMessage::serverPrefixSuccess() + *it++ + '\n';
-	for (; it != _requestData.end(); it++)
-		dst += "\t " + *it + '\n';
-
-	return dst;
-}
-
-std::string		Response::toMessage() const {
-	std::vector<std::string>::const_iterator	it = _requestData.begin();
-	std::string		dst;
-
-	dst += '[' + ColorMessage::channelPrefix(*it++) + ']';
-	dst += '[' + ColorMessage::clientPrefix(*it++) + "] ";
-	for (; it != _requestData.end(); it++)
-		dst += *it + ' ';
-	dst += '\n';
-
-	return dst;
-}
-
-std::string		Response::toPrivateMessage() const {
-	std::vector<std::string>::const_iterator	it = _requestData.begin();
-	std::string		dst;
-
-	dst += '[' + ColorMessage::clientPrefix(*it++) + "] ";
-	++it;
 	for (; it != _requestData.end(); it++)
 		dst += *it + ' ';
 	dst += '\n';
