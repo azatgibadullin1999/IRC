@@ -21,7 +21,6 @@
 # include <utility>
 # include "ServerModels/Client.hpp"
 # include "../models/ClientRequest.hpp"
-# include "../models/ServerMessage.hpp"
 # include "../models/Response.hpp"
 
 class Methods;

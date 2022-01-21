@@ -13,12 +13,12 @@
 #include "Client.hpp"
 
 Client::Client(unsigned long socket, const std::string &login, const std::string &password) :
-	_socket(socket),
 	_nickName(login),
 	_login(login),
 	_password(password),
-	_userId(socket),
 	_chanel("Hub"),
+	_socket(socket),
+	_userId(socket),
 	_idRequest(0),
 	_loginStatus(true),
 	_privileged(false) { }
@@ -27,7 +27,7 @@ Client::~Client(void) {
 	__deleteRequests();
 }
 
-unsigned long 	Client::getSocket() const {
+int		Client::getSocket() const {
 	return _socket;
 }
 

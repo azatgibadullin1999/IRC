@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   models.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 13:57:44 by root              #+#    #+#             */
-/*   Updated: 2022/01/07 15:37:51 by root             ###   ########.fr       */
+/*   Updated: 2022/01/21 01:05:28 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 
 # include "ClientRequest.hpp"
-# include "ServerMessage.hpp"
 # include "UID.hpp"
 
 

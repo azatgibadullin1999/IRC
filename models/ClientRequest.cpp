@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ClientRequest.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 22:07:48 by root              #+#    #+#             */
-/*   Updated: 2022/01/14 20:19:34 by root             ###   ########.fr       */
+/*   Updated: 2022/01/21 01:44:39 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "ClientRequest.hpp"
 
 ClientRequest::ClientRequest(const std::vector<std::string> &requestData, const Commands::ClientCommandType type, const UID &uid) :
-	_requestData(requestData), _type(type), _uid(uid) { }
+	_requestData(requestData), _uid(uid), _type(type) { }
 
 ClientRequest::~ClientRequest() { }
 

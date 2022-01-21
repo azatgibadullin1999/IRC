@@ -23,13 +23,11 @@ struct		Commands {
 	private :
 	
 		std::vector<std::string>		_clientCommands;
-		std::vector<std::string>		_serverCommands;
 	
 	public :
 
 		enum Status {
-			SUCCESS_SEND,
-			SUCCESS_NO_SEND,
+			SUCCESS,
 			FAIL,
 			ERROR,
 		} ;
@@ -54,20 +52,11 @@ struct		Commands {
 			COMMAND_NOT_FOUND,
 		} ;
 
-		enum ServerCommandType {
-			REQUEST,
-			RESPONSE,
-			REQUEST_CONNECT,
-			RESPONSE_CONNECT,
-		} ;
-
 		Commands() ;
 
 		~Commands() ;
 
 		ClientCommandType		whichClientCommand(const std::string &str) const ;
-
-		bool					isServerCommand(const std::string &str) const ;
 
 } ;
 

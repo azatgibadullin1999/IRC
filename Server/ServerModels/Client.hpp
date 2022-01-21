@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:20:11 by zera              #+#    #+#             */
-/*   Updated: 2022/01/18 18:53:04 by root             ###   ########.fr       */
+/*   Updated: 2022/01/21 01:37:48 by zera             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class Client
 		std::string		_password;
 
 		std::string		_chanel;
-		unsigned long	_socket;
+		int				_socket;
 		unsigned long	_userId;
 		unsigned int	_idRequest;
 		bool			_loginStatus;
@@ -48,7 +48,7 @@ class Client
 
 		~Client(void) ;
 
-		unsigned long	getSocket() const ;
+		int				getSocket() const ;
 
 		unsigned long	getUserId() const ;
 

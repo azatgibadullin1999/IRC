@@ -30,7 +30,6 @@ Commands::Commands() {
 	_clientCommands.push_back("/KILL");
 	_clientCommands.push_back("/DIE");
 
-	_serverCommands.push_back("SERVER ");
 }
 
 Commands::~Commands() { }
@@ -49,15 +48,4 @@ Commands::ClientCommandType		Commands::whichClientCommand(const std::string &str
 		return COMMAND_NOT_FOUND;
 
 	return MESSAGE;
-}
-
-bool	Commands::isServerCommand(const std::string &str) const {
-	std::vector<std::string>::const_iterator it = _serverCommands.begin();
-	
-	for (; it != _serverCommands.end(); it++) {
-		if (!it->compare(0, it->size(), str, 0, it->size()))
-			return true;
-	}
-
-	return false ;
 }
