@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 18:32:23 by root              #+#    #+#             */
-/*   Updated: 2022/01/21 01:26:48 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/20 20:22:42 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ struct		Commands {
 		enum ClientCommandType {
 			MESSAGE,
 			PRIVMSG,
+			NOTICE,
 			NICK,
 			JOIN,
 			LEAVE,
@@ -44,11 +45,11 @@ struct		Commands {
 			HELP,
 			REGISTR,
 			LOGIN,
-			COMMAND_NOT_FOUND,
 			OPER,
 			KICK,
 			KILL,
 			DIE,
+			COMMAND_NOT_FOUND,
 		} ;
 
 		Commands() ;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 17:31:56 by root              #+#    #+#             */
-/*   Updated: 2022/01/17 18:29:55 by root             ###   ########.fr       */
+/*   Updated: 2022/01/20 15:15:51 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,51 @@ std::string		ft::to_string(unsigned long value) {
 		dst.insert(dst.begin(),'0' + (value % base));
 		value /= base;
 	}
+
+	return dst;
+}
+
+const std::string	Message::toServerResponse(const std::string &message, SuccessType) {
+	return ColorMessage::serverPrefixSuccess() + message + '\n';
+}
+
+const std::string	Message::toServerResponse(const std::string &message, FailType) {
+	return ColorMessage::serverPrefixFail() + message + '\n';
+}
+
+const std::string		Message::toList(const std::vector<std::string> &args) {
+	std::vector<std::string>::const_iterator	it = args.begin();
+	std::string		dst;
+
+	dst += ColorMessage::serverPrefixSuccess() + *it++ + '\n';
+	for (; it != args.end(); it++)
+		dst += "\t " + *it + '\n';
+
+	return dst;
+}
+
+const std::string		Message::toMessage(const std::vector<std::string> &args) {
+	std::vector<std::string>::const_iterator	it = args.begin();
+	std::string		dst;
+
+	dst += '[' + ColorMessage::channelPrefix(*it++) + ']';
+	dst += '[' + ColorMessage::clientPrefix(*it++) + "] ";
+	for (; it != args.end(); it++)
+		dst += *it + ' ';
+	dst += '\n';
+
+	return dst;
+}
+
+const std::string		Message::toPrivateMessage(const std::vector<std::string> &args) {
+	std::vector<std::string>::const_iterator	it = args.begin();
+	std::string		dst;
+
+	dst += '[' + ColorMessage::clientPrefix(*it++) + "] ";
+	++it;
+	for (; it != args.end(); it++)
+		dst += *it + ' ';
+	dst += '\n';
 
 	return dst;
 }

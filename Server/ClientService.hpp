@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientService.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:16:51 by zera              #+#    #+#             */
-/*   Updated: 2022/01/21 01:30:49 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/20 20:25:38 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class ClientService
 					//	execute to client
 				void	message(std::vector<Client> &clients, const Response &response) ;
 				void	privateMessage(std::vector<Client> &clients, const Response &response) ;
+				void	notice(std::vector<Client> &clients, const Response &response) ;
 				void	nickName(std::vector<Client> &clients, const Response &response) ;
 				void	join(std::vector<Client> &clients, const Response &response) ;
 				void	leave(std::vector<Client> &clients, const Response &response) ;
@@ -57,23 +58,24 @@ class ClientService
 				void	kill(std::vector<Client> &clients, const Response &response) ;
 				void	die(std::vector<Client> &clients, const Response &response) ;
 					//	Check execute to client
-				Commands::Status	checkMessage(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkPrivateMessage(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkNickName(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkJoin(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkLeave(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkQuit(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkWho(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkList(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkHelp(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkRegister(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkLogin(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkCommandNotFound(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkMessage(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkPrivateMessage(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkNotice(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkNickName(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkJoin(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkLeave(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkQuit(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkWho(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkList(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkHelp(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkRegister(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkLogin(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkCommandNotFound(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 					// Check execute to operator
-				Commands::Status	checkOper(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkKick(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkKill(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
-				Commands::Status	checkDie(const std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkOper(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkKick(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkKill(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkDie(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 
 			private :
 					//	Utils
@@ -84,12 +86,12 @@ class ClientService
 		} ;
 
 		typedef	void				(Methods::*__funcExec)(std::vector<Client> &, const Response &) ;
-		typedef Commands::Status	(Methods::*__funcCheck)(const std::vector<Client> &, ClientRequest *, std::vector<std::string> &) ;
+		typedef Commands::Status	(Methods::*__funcCheck)(std::vector<Client> &, ClientRequest *, std::vector<std::string> &) ;
 
 
 		Methods					_methods;
-		__funcExec				_funcExec[16];
-		__funcCheck				_funcCheck[16];
+		__funcExec				_funcExec[17];
+		__funcCheck				_funcCheck[17];
 		std::vector<Client>		_clients;
 	
 	public :
