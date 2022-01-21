@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:34:29 by root              #+#    #+#             */
-/*   Updated: 2022/01/19 13:49:18 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/21 15:00:30 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,6 @@ class Response {
 		void			setClientCommand(Commands::ClientCommandType type);
 		
 		std::string		toString() const ;
-
-		std::string		toList() const ;
-
-		std::string		toMessage() const ;
-
-		std::string		toPrivateMessage() const ;
 
 } ;
 

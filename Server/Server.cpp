@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/21 01:46:41 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/21 16:27:09 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,6 @@ void		Server::clientReadEvent(int fd, std::string &rawRq) {
 	try {
 		UID		uid = UID(atoll(_serverSettings->getPort().c_str()), _clientService.getUserId(fd), _clientService.getIdRequest(fd));
 		ClientRequest *clientRequest = _parser.generateClientRequest(rawRq, uid);
-		_clientService.addRequest(fd, clientRequest);
 		Response *response =_clientService.checkToExecute(clientRequest);
 		_clientService.execute(response);
 		delete clientRequest;

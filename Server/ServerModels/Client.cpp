@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:39:00 by root              #+#    #+#             */
-/*   Updated: 2022/01/21 01:42:37 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/21 14:37:43 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,7 @@ Client::Client(unsigned long socket, const std::string &login, const std::string
 	_loginStatus(true),
 	_privileged(false) { }
 
-Client::~Client(void) {
-	__deleteRequests();
-}
+Client::~Client(void) { }
 
 int		Client::getSocket() const {
 	return _socket;
@@ -38,19 +36,6 @@ unsigned long	Client::getUserId() const {
 
 unsigned int	Client::getIdRequest() {
 	return ++_idRequest;
-}
-
-void	Client::addRequest(ClientRequest *request) {
-	requests.push_back(request);
-}
-
-void	Client::deleteRequest(const UID &uid) {
-	std::vector<ClientRequest*>::iterator	rq = findeReqeust(uid);
-
-	if (rq != requests.end()) {
-		delete	*rq;
-		requests.erase(rq);
-	}
 }
 
 void	Client::addResponse(const std::string &response) {
@@ -92,7 +77,6 @@ void				Client::loginIn(unsigned long newSocket) {
 
 void				Client::loginOut() {
 	_loginStatus = false;
-	_privileged = false;
 	_socket = -1;
 }
 
@@ -104,17 +88,3 @@ void				Client::becomePrivileged() {
 	_privileged = true;
 }
 
-std::vector<ClientRequest*>::iterator	Client::findeReqeust(const UID &uid) {
-	std::vector<ClientRequest*>::iterator	it = requests.begin();
-
-	for (; it < requests.end() && (*it)->getUID() != uid; it++) { }
-
-	return it;
-}
-
-void		Client::__deleteRequests() {
-	std::vector<ClientRequest*>::iterator	it = requests.begin();
-
-	for (; it != requests.end(); it++)
-		delete *it;
-}
