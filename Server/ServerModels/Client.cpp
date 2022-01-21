@@ -48,7 +48,7 @@ void	Client::deleteRequest(const UID &uid) {
 	std::vector<ClientRequest*>::iterator	rq = findeReqeust(uid);
 
 	if (rq != requests.end()) {
-		delete	*rq;
+		// delete	*rq;
 		requests.erase(rq);
 	}
 }
@@ -115,6 +115,6 @@ std::vector<ClientRequest*>::iterator	Client::findeReqeust(const UID &uid) {
 void		Client::__deleteRequests() {
 	std::vector<ClientRequest*>::iterator	it = requests.begin();
 
-	for (; it != requests.end(); it++)
-		delete *it;
+	// for (; it != requests.end(); it++)
+	// 	delete *it;
 }
