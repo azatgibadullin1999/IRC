@@ -61,6 +61,7 @@ void						ConnectionsService::disconnect(int socket) {
 	for (std::vector<Connection*>::iterator connection = _connections.begin();
 		 connection < _connections.end(); connection++) {
 		if ((*connection)->getSocket() == socket) {
+			delete (*connection);
 			_connections.erase(connection);
 			return ;
 		}
