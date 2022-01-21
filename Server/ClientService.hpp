@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientService.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:16:51 by zera              #+#    #+#             */
-/*   Updated: 2022/01/20 00:09:37 by root             ###   ########.fr       */
+/*   Updated: 2022/01/20 20:25:38 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class ClientService
 					//	execute to client
 				void	message(std::vector<Client> &clients, const Response &response) ;
 				void	privateMessage(std::vector<Client> &clients, const Response &response) ;
+				void	notice(std::vector<Client> &clients, const Response &response) ;
 				void	nickName(std::vector<Client> &clients, const Response &response) ;
 				void	join(std::vector<Client> &clients, const Response &response) ;
 				void	leave(std::vector<Client> &clients, const Response &response) ;
@@ -60,6 +61,7 @@ class ClientService
 					//	Check execute to client
 				Commands::Status	checkMessage(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 				Commands::Status	checkPrivateMessage(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				Commands::Status	checkNotice(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 				Commands::Status	checkNickName(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 				Commands::Status	checkJoin(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 				Commands::Status	checkLeave(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
@@ -89,8 +91,8 @@ class ClientService
 
 
 		Methods					_methods;
-		__funcExec				_funcExec[16];
-		__funcCheck				_funcCheck[16];
+		__funcExec				_funcExec[17];
+		__funcCheck				_funcCheck[17];
 		std::vector<Client>		_clients;
 	
 	public :

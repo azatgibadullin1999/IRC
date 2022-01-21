@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientService.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:24:58 by root              #+#    #+#             */
-/*   Updated: 2022/01/20 00:12:00 by root             ###   ########.fr       */
+/*   Updated: 2022/01/20 21:06:30 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 ClientService::ClientService() : _methods() {
 	__functionPointerInit();
+	_clients.push_back(Client(1, "xXx_admin_xXx", "Admin"));
+	_clients[0].becomePrivileged();
+	_clients[0].loginOut();
 }
 
 ClientService::~ClientService() { }
@@ -40,10 +43,8 @@ void	ClientService::loginClient(unsigned long socket, Response *response) {
 void	ClientService::disconnectClient(unsigned long socket) {
 	Client	*cl = __findeClient(socket, FindeSocket()).base();
 
-	if (cl != _clients.end().base()) {
+	if (cl != _clients.end().base())
 		cl->loginOut();
-		std::cout << cl->isLogin() << std::endl;
-	}
 }
 
 unsigned long	ClientService::getIdRequest(unsigned long socket) {
@@ -121,13 +122,38 @@ void		ClientService::execute(Response *response) {
 void	ClientService::Methods::message(
 	std::vector<Client> &clients,
 	const Response &response) {
-
+		return ;
 	}
 
 void	ClientService::Methods::privateMessage(
 	std::vector<Client> &clients,
 	const Response &response) {
+		std::vector<Client>::iterator	it = clients.begin();
+		Client		*clientSendMessage = __findeClient(clients, response.getUID());
 
+		if (response.getCommandStatus() == Commands::ERROR) {
+			if (clientSendMessage != clients.end().base())
+				clientSendMessage->addResponse(Message::toServerResponse("few arguments", FailType()));
+			return ;
+		}
+
+		if (response.getCommandStatus() == Commands::FAIL) {
+			if (clientSendMessage != clients.end().base())
+				clientSendMessage->addResponse(Message::toServerResponse("user not found", FailType()));
+			return ;
+		}
+	}
+
+void	ClientService::Methods::notice(
+	std::vector<Client> &clients,
+	const Response &response) {
+		Client		*clientSendMessage = __findeClient(clients, response.getUID());
+		
+		if (response.getCommandStatus() == Commands::ERROR) {
+			if (clientSendMessage != clients.end().base())
+				clientSendMessage->addResponse(Message::toServerResponse("few arguments", FailType()));
+			return ;
+		}
 	}
 
 void	ClientService::Methods::nickName(
@@ -265,19 +291,58 @@ void	ClientService::Methods::oper(
 void	ClientService::Methods::kick(
 	std::vector<Client> &clients,
 	const Response &response) {
+		Client	*cl = __findeClient(clients, response.getUID());
 
+		if (cl == clients.end().base())
+			return ;
+		if (response.getCommandStatus() == Commands::SUCCESS_NO_SEND) {
+			std::vector<Client>::iterator	it = clients.begin();
+
+			for (; it != clients.end() && it->getNickName() != response.getArguments()[0]; it++) { }
+
+			if (it == clients.end() || it->isLogin()) {
+				cl->addResponse(Message::toServerResponse("client don't found on server ", FailType()));
+			}
+			else {
+				if (it->getChanel() == "Hub") {
+					cl->addResponse(Message::toServerResponse("you can't kick client form Hub, but you can /KILL him", FailType()));
+				}
+				else {
+					it->addResponse(Message::toServerResponse("you kicked from : " + it->getChanel(), FailType()));
+					cl->addResponse(Message::toServerResponse("you kick : " + it->getNickName() + "; from : " + it->getChanel(), SuccessType()));
+					it->setChanel("Hub");
+				}
+			}
+		}
 	}
 
 void	ClientService::Methods::kill(
 	std::vector<Client> &clients,
 	const Response &response) {
+		Client	*cl = __findeClient(clients, response.getUID());
 
+		if (cl == clients.end().base())
+			return ;
+		if (response.getCommandStatus() == Commands::SUCCESS_NO_SEND) {
+			std::vector<Client>::iterator	it = clients.begin();
+
+			for (; it != clients.end() && it->getNickName() != response.getArguments()[0]; it++) { }
+
+			if (it == clients.end()) {
+				cl->addResponse(Message::toServerResponse("client don't found on server", FailType()));
+			}
+			else {
+				cl->addResponse(Message::toServerResponse("client deleted from server", SuccessType()));
+				it->loginOut();
+			}
+		}
 	}
 
 void	ClientService::Methods::die(
 	std::vector<Client> &clients,
 	const Response &response) {
-
+		if (response.getCommandStatus() == Commands::SUCCESS_NO_SEND)
+			exit(0);
 	}
 
 
@@ -307,13 +372,14 @@ Commands::Status	ClientService::Methods::checkMessage(
 				it->addResponse(Message::toMessage(request->getArguments()));
 			}
 		}
+		return Commands::SUCCESS_SEND;
 	}
 
 Commands::Status	ClientService::Methods::checkPrivateMessage(
 	std::vector<Client> &clients,
 	ClientRequest *request,
 	std::vector<std::string> &responseArgs) {
-		std::vector<Client>::const_iterator		it = clients.begin();
+		std::vector<Client>::iterator		it = clients.begin();
 
 		if (request->getArguments().size() < 2)
 			return Commands::ERROR;
@@ -326,33 +392,35 @@ Commands::Status	ClientService::Methods::checkPrivateMessage(
 		for (; it != clients.end(); it++) {
 			if (it->getNickName() == request->getArguments()[1]
 				&& it->isLogin()) {
-				responseArgs = request->getArguments();
-				return Commands::SUCCESS_SEND;
+				it->addResponse(Message::toPrivateMessage(request->getArguments()));
+				return Commands::SUCCESS_NO_SEND;
 			}
 		}
 		return Commands::FAIL;
+	}
 
-		std::vector<Client>::iterator	it = clients.begin();
-		Client		*clientSendMessage = __findeClient(clients, response.getUID());
+Commands::Status	ClientService::Methods::checkNotice(
+	std::vector<Client> &clients,
+	ClientRequest *request,
+	std::vector<std::string> &responseArgs) {
+		std::vector<Client>::iterator		it = clients.begin();
 
-		if (response.getCommandStatus() == Commands::ERROR) {
-			if (clientSendMessage != clients.end().base())
-				clientSendMessage->addResponse(Message::toServerResponse("few arguments", FailType()));
-			return ;
+		if (request->getArguments().size() < 2)
+			return Commands::ERROR;
+
+		const Client	*cl = __findeClient(clients, request->getUID());
+		if (cl != clients.end().base()) {
+			request->setNick(cl->getNickName());
 		}
 
-		if (response.getCommandStatus() == Commands::FAIL) {
-			if (clientSendMessage != clients.end().base())
-				clientSendMessage->addResponse(Message::toServerResponse("user not found", FailType()));
-			return ;
-		}
-			
 		for (; it != clients.end(); it++) {
-			if (it->getNickName() == response.getArguments()[1]
-				&& it->isLogin())
-				it->addResponse(Message::toPrivateMessage(response.getArguments()));
+			if (it->getNickName() == request->getArguments()[1]
+				&& it->isLogin()) {
+				it->addResponse(Message::toPrivateMessage(request->getArguments()));
+				return Commands::SUCCESS_NO_SEND;
+			}
 		}
-
+		return Commands::FAIL;
 	}
 
 Commands::Status	ClientService::Methods::checkNickName(
@@ -533,6 +601,7 @@ Commands::Status	ClientService::Methods::checkOper(
 			return Commands::ERROR;
 		else if (request->getArguments().size() < 1)
 			return Commands::FAIL;
+		responseArgs = request->getArguments();
 		return Commands::SUCCESS_NO_SEND;
 	}
 
@@ -542,12 +611,12 @@ Commands::Status	ClientService::Methods::checkKick(
 	std::vector<std::string> &responseArgs) {
 		const Client	*cl = __findeClient(clients, request->getUID());
 
-		if (cl == clients.end().base())
+		if (cl == clients.end().base() || !cl->isPrivileged())
 			return Commands::ERROR;
-		else if (!cl->isPrivileged())
+		else if (request->getArguments().size() < 1)
 			return Commands::FAIL;
-		else
-			return Commands::SUCCESS_NO_SEND;
+		responseArgs = request->getArguments();
+		return Commands::SUCCESS_NO_SEND;
 	}
 
 Commands::Status	ClientService::Methods::checkKill(
@@ -556,12 +625,12 @@ Commands::Status	ClientService::Methods::checkKill(
 	std::vector<std::string> &responseArgs) {
 		const Client	*cl = __findeClient(clients, request->getUID());
 
-		if (cl == clients.end().base())
+		if (cl == clients.end().base() || !cl->isPrivileged())
 			return Commands::ERROR;
-		else if (!cl->isPrivileged())
+		else if (request->getArguments().size() < 1)
 			return Commands::FAIL;
-		else
-			return Commands::SUCCESS_NO_SEND;
+		responseArgs = request->getArguments();
+		return Commands::SUCCESS_NO_SEND;
 	}
 
 Commands::Status	ClientService::Methods::checkDie(
@@ -570,12 +639,11 @@ Commands::Status	ClientService::Methods::checkDie(
 	std::vector<std::string> &responseArgs) {
 		const Client	*cl = __findeClient(clients, request->getUID());
 
-		if (cl == clients.end().base())
+		if (cl == clients.end().base() || !cl->isPrivileged())
 			return Commands::ERROR;
-		else if (!cl->isPrivileged())
+		else if (request->getArguments().size() < 1)
 			return Commands::FAIL;
-		else
-			return Commands::SUCCESS_NO_SEND;
+		return Commands::SUCCESS_NO_SEND;
 	}
 
 
@@ -654,34 +722,36 @@ std::vector<Client>::iterator	ClientService::__findeClient(const std::string &ni
 void	ClientService::__functionPointerInit() {
 	_funcExec[0] = &Methods::message;
 	_funcExec[1] = &Methods::privateMessage;
-	_funcExec[2] = &Methods::nickName;
-	_funcExec[3] = &Methods::join;
-	_funcExec[4] = &Methods::leave;
-	_funcExec[5] = &Methods::quit;
-	_funcExec[6] = &Methods::who;
-	_funcExec[7] = &Methods::list;
-	_funcExec[8] = &Methods::help;
-	_funcExec[9] = &Methods::Register;
-	_funcExec[10] = &Methods::login;
-	_funcExec[11] = &Methods::commandNotFound;
+	_funcExec[2] = &Methods::notice;
+	_funcExec[3] = &Methods::nickName;
+	_funcExec[4] = &Methods::join;
+	_funcExec[5] = &Methods::leave;
+	_funcExec[6] = &Methods::quit;
+	_funcExec[7] = &Methods::who;
+	_funcExec[8] = &Methods::list;
+	_funcExec[9] = &Methods::help;
+	_funcExec[10] = &Methods::Register;
+	_funcExec[11] = &Methods::login;
 	_funcExec[12] = &Methods::oper;
 	_funcExec[13] = &Methods::kick;
 	_funcExec[14] = &Methods::kill;
 	_funcExec[15] = &Methods::die;
+	_funcExec[16] = &Methods::commandNotFound;
 	_funcCheck[0] = &Methods::checkMessage;
 	_funcCheck[1] = &Methods::checkPrivateMessage;
-	_funcCheck[2] = &Methods::checkNickName;
-	_funcCheck[3] = &Methods::checkJoin;
-	_funcCheck[4] = &Methods::checkLeave;
-	_funcCheck[5] = &Methods::checkQuit;
-	_funcCheck[6] = &Methods::checkWho;
-	_funcCheck[7] = &Methods::checkList;
-	_funcCheck[8] = &Methods::checkHelp;
-	_funcCheck[9] = &Methods::checkRegister;
-	_funcCheck[10] = &Methods::checkLogin;
-	_funcCheck[11] = &Methods::checkCommandNotFound;
+	_funcCheck[2] = &Methods::checkNotice;
+	_funcCheck[3] = &Methods::checkNickName;
+	_funcCheck[4] = &Methods::checkJoin;
+	_funcCheck[5] = &Methods::checkLeave;
+	_funcCheck[6] = &Methods::checkQuit;
+	_funcCheck[7] = &Methods::checkWho;
+	_funcCheck[8] = &Methods::checkList;
+	_funcCheck[9] = &Methods::checkHelp;
+	_funcCheck[10] = &Methods::checkRegister;
+	_funcCheck[11] = &Methods::checkLogin;
 	_funcCheck[12] = &Methods::checkOper;
-	_funcCheck[12] = &Methods::checkKick;
-	_funcCheck[12] = &Methods::checkKill;
-	_funcCheck[12] = &Methods::checkDie;
+	_funcCheck[13] = &Methods::checkKick;
+	_funcCheck[14] = &Methods::checkKill;
+	_funcCheck[15] = &Methods::checkDie;
+	_funcCheck[16] = &Methods::checkCommandNotFound;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:39:00 by root              #+#    #+#             */
-/*   Updated: 2022/01/18 18:53:34 by root             ###   ########.fr       */
+/*   Updated: 2022/01/20 17:25:00 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ void				Client::loginIn(unsigned long newSocket) {
 
 void				Client::loginOut() {
 	_loginStatus = false;
-	_privileged = false;
 	_socket = -1;
 }
 

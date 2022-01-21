@@ -3,18 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 22:21:00 by root              #+#    #+#             */
-/*   Updated: 2022/01/18 19:22:38 by root             ###   ########.fr       */
+/*   Updated: 2022/01/21 14:10:06 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "Commands.hpp"
 
 Commands::Commands() {
-	_clientCommands.reserve(8);
+	_clientCommands.reserve(16);
 	_clientCommands.push_back("/PRIVMSG");
+	_clientCommands.push_back("/NOTICE");
 	_clientCommands.push_back("/NICK");
 	_clientCommands.push_back("/JOIN");
 	_clientCommands.push_back("/LEAVE");
@@ -22,10 +23,8 @@ Commands::Commands() {
 	_clientCommands.push_back("/WHO");
 	_clientCommands.push_back("/LIST");
 	_clientCommands.push_back("/HELP");
-
 	_clientCommands.push_back("/REGISTER");
 	_clientCommands.push_back("/LOGIN");
-
 	_clientCommands.push_back("/OPER");
 	_clientCommands.push_back("/KICK");
 	_clientCommands.push_back("/KILL");
@@ -47,7 +46,7 @@ Commands::ClientCommandType		Commands::whichClientCommand(const std::string &str
 	}
 
 	if (!str.empty() && str[0] == '/')
-		return ClientCommandType::COMMAND_NOT_FOUND;
+		return COMMAND_NOT_FOUND;
 
 	return MESSAGE;
 }

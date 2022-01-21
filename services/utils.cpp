@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 17:31:56 by root              #+#    #+#             */
-/*   Updated: 2022/01/20 00:00:19 by root             ###   ########.fr       */
+/*   Updated: 2022/01/20 15:15:51 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,11 @@ std::string		ft::to_string(unsigned long value) {
 	return dst;
 }
 
-static const std::string	toServerResponse(const std::string &message, SuccessType) {
+const std::string	Message::toServerResponse(const std::string &message, SuccessType) {
 	return ColorMessage::serverPrefixSuccess() + message + '\n';
 }
 
-static const std::string	toServerResponse(const std::string &message, FailType) {
+const std::string	Message::toServerResponse(const std::string &message, FailType) {
 	return ColorMessage::serverPrefixFail() + message + '\n';
 }
 
