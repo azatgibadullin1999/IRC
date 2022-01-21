@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientRequest.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 22:07:48 by root              #+#    #+#             */
-/*   Updated: 2022/01/21 01:44:39 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/21 14:55:24 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,4 @@ std::string						ClientRequest::getMessage() const {
 
 const UID						&ClientRequest::getUID() const {
 	return _uid;
-}
-
-void		ClientRequest::setChannelAndNick(const std::string &channel, const std::string &nick) {
-	_requestData.insert(_requestData.begin(), nick);
-	_requestData.insert(_requestData.begin(), channel);
-}
-
-void		ClientRequest::setNick(const std::string &nick) {
-	_requestData.insert(_requestData.begin(), nick);
 }
