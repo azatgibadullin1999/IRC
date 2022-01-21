@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:20:11 by zera              #+#    #+#             */
-/*   Updated: 2022/01/21 01:37:48 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/21 14:37:30 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ class Client
 
 	public :
 
-		std::vector<ClientRequest*>	requests;
 		std::vector<std::string>	responses;
 
 		Client(unsigned long socket, const std::string &login, const std::string &password) ;
@@ -76,17 +75,10 @@ class Client
 
 		void				becomePrivileged() ;
 
-		void	addRequest(ClientRequest *request) ;
-
-		void	deleteRequest(const UID &uid);
-
 		void	addResponse(const std::string &response) ;
-
-		std::vector<ClientRequest*>::iterator	findeReqeust(const UID &uid) ;
 
 	private :
 
-		void	__deleteRequests();
 
 } ;
 

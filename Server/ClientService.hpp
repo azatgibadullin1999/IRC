@@ -6,7 +6,7 @@
 /*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:16:51 by zera              #+#    #+#             */
-/*   Updated: 2022/01/20 20:25:38 by larlena          ###   ########.fr       */
+/*   Updated: 2022/01/21 14:50:52 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ class ClientService
 				Commands::Status	checkKill(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 				Commands::Status	checkDie(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 
+				Commands::Status	emptyFunc(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+
 			private :
 					//	Utils
 				void			__deleteRequest(std::vector<Client> &clients, const UID &uid) ;
@@ -110,11 +112,7 @@ class ClientService
 
 		unsigned long	getUserId(unsigned long socket) ;
 
-		void			addRequest(int socket, ClientRequest *request) ;
-
 		void			setFds(fd_set &writeFds) ;
-
-		void        	sendResponse(int socket) ;
 
 		void			sendResponseToClient(unsigned int socket) ;
 
