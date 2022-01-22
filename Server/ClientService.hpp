@@ -6,7 +6,7 @@
 /*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:16:51 by zera              #+#    #+#             */
-/*   Updated: 2022/01/21 14:50:52 by larlena          ###   ########.fr       */
+/*   Updated: 2022/01/22 16:13:29 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ class ClientService
 
 			private :
 					//	Utils
+				void			__parsPrivMessageArgument(std::vector<std::string> &dst, const std::string &usrs);
+				bool			__checkNameToValid(const std::string &name);
 				void			__deleteRequest(std::vector<Client> &clients, const UID &uid) ;
 				const Client	*__findeClient(const std::vector<Client> &clients, const UID &uid) ;
 				Client			*__findeClient(std::vector<Client> &clients, const UID &uid) ;
