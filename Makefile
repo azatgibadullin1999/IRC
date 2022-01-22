@@ -1,11 +1,9 @@
+NAME =	ircserv
 
-NAME =	server
-
-CC =	clang++ -std:c++98 -Wall -Wextra -Werror
+CC =	clang++ -std=c++98
 
 MODELS =	models/ClientRequest.cpp \
 			models/Response.cpp \
-			models/ServerMessage.cpp \
 			models/UID.cpp \
 
 SERVICES =	services/Commands.cpp \
@@ -13,23 +11,36 @@ SERVICES =	services/Commands.cpp \
 			services/utils.cpp \
 
 SERVER =	Server/ClientService.cpp \
+			Server/Sockets/SocketBase.cpp \
+			Server/Sockets/ServerSocket.cpp \
 			Server/Server.cpp \
-			Server/ServerClientService.cpp \
+			Server/ConnectionsService.cpp \
 			Server/ServerModels/Client.cpp \
 			Server/Settings/ServerSettings.cpp \
-			Server/Sockets/ServerSocket.cpp \
-			Server/Sockets/SocketBase.cpp \
+
+INC =		-I./models/ \
+			-I./services/ \
+			-I./Server/ \
+			-I./Server/Settings \
+			-I./Server/ServerModels \
+			-I./Server/Sockets \
 
 
-SRC =		$(MODELS) $(SERVICES) $(SERVER)
+SRC =		$(MODELS) $(SERVICES) $(SERVER) main.cpp
 
-OBJ =		$(SRC:%.cpp=%.o)
+OFILE = $(SRC:.cpp=.o)
 
+all: $(NAME)
 
-all : $(SRC)
+$(NAME): $(OFILE)
+	$(CC) $(INC) $(OFILE) -o $(NAME)
 
-clean :
+clean: 
+	rm -f $(OFILE)
 
-flcean :
+fclean: clean
+	rm -f $(NAME)
 
-re :
+re: fclean all
+
+.PHONY: all clean fclean re %.o

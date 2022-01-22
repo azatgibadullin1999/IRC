@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
+/*   By: hapryl <hapryl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 12:34:29 by root              #+#    #+#             */
-/*   Updated: 2022/01/21 15:00:30 by larlena          ###   ########.fr       */
+/*   Updated: 2022/01/22 16:20:51 by hapryl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ class Response {
 		const std::vector<std::string>	&getArguments() const ;
 
 		void			setClientCommand(Commands::ClientCommandType type);
+
+		void			setStatus(Commands::Status status);
 		
 		std::string		toString() const ;
 

@@ -21,7 +21,6 @@ ServerSocket::~ServerSocket() { }
 void	ServerSocket::connect() {
 	struct addrinfo *address = getAddress();
 	if (bind(getSocket(), address->ai_addr, address->ai_addrlen)) {
-		std::cout << "" << std::endl;
 		throw SocketException(strerror(errno));
 	}
 }
@@ -35,5 +34,8 @@ int		ServerSocket::accept() {
 	int newSocket = ::accept(getSocket(), NULL, NULL);
 	if (newSocket < 0)
 		throw SocketException("accept");
+	if (fcntl(newSocket, F_SETFL, O_NONBLOCK) < 0) {
+		throw SocketException("fcntl");
+	}
 	return newSocket;
 }
