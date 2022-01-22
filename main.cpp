@@ -10,17 +10,15 @@ ServerSettings *settings;
 		} catch (ServerSettingsException &e) {
 			std::cout << e.what() << std::endl;
 		}
-	} else if (ac == 4) {
-		try {
-			settings = new ServerSettings(av[1], av[2], av[3]);
-		} catch (ServerSettingsException &e) {
-			std::cout << e.what() << std::endl;
-		}
 	} else {
-		printf("Error");
+		printf("Error args.\n./ircserv <port> <password>\n");
 		exit(-1);
 	}
 
-	Server server = Server(settings);
-	server.run();
+	try {
+		Server server = Server(settings);
+		server.run();
+	} catch (std::exception &e) {
+		std::cout << e.what() << std::endl;
+	}
 }

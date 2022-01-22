@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ConnectionsService.hpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: hapryl <hapryl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/12 13:35:05 by zera              #+#    #+#             */
-/*   Updated: 2022/01/21 01:45:23 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/22 15:29:10 by hapryl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ class ConnectionException : public std::exception {
 		char			*_result;
 	public:
 		ConnectionException(const char *msg) throw() : std::exception() {
-			std::string total = std::string("Socket Exception: ") + msg;
+			std::string total = std::string("Connection Service Exception: ") + msg;
 			_result = strdup(total.c_str());
 		}
 		virtual ~ConnectionException() throw() {

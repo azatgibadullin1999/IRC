@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: hapryl <hapryl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:09:40 by zera              #+#    #+#             */
-/*   Updated: 2022/01/21 01:35:41 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/22 14:05:40 by hapryl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include "ConnectionsService.hpp"
 # include "../services/Parser.hpp"
 # include "../models/models.hpp"
+# include "../services/utils.hpp"
 
 
 class Server

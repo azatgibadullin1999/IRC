@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerSettings.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zera <zera@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: hapryl <hapryl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/08 19:56:19 by zera              #+#    #+#             */
-/*   Updated: 2022/01/11 19:50:30 by zera             ###   ########.fr       */
+/*   Updated: 2022/01/22 15:28:55 by hapryl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class ServerSettingsException : public std::exception {
 		char			*_result;
 	public:
 		ServerSettingsException(const char *msg) throw() : std::exception() {
-			std::string total = std::string("Socket Exception: ") + msg;
+			std::string total = std::string("Server Settings Exception: ") + msg;
 			_result = strdup(total.c_str());
 		}
 		virtual ~ServerSettingsException() throw() {

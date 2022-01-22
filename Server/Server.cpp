@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
+/*   By: hapryl <hapryl@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/21 16:27:09 by larlena          ###   ########.fr       */
+/*   Updated: 2022/01/22 16:20:46 by hapryl           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ void Server::readEvent(int fd) {
 }
 
 void	Server::connectionReadEvent(int fd, std::string &rawRq) {
-	// Connection idReq
 	UID		uid = UID(atoll(_serverSettings->getPort().c_str()), fd, 0);
 	try {
 		ClientRequest *clientRequest = _parser.generateClientRequest(rawRq, uid);
@@ -113,11 +112,18 @@ void	Server::connectionReadEvent(int fd, std::string &rawRq) {
 					_clientService.loginClient(fd, resp);
 				}
 			} else if (resp->getCommandStatus() == Commands::FAIL || resp->getCommandStatus() == Commands::ERROR) {
-				_connectionsService.addResponse(fd, "[SERVER] invalid arguments or this user already exists\n");
+				if (clientRequest->getCommand() == Commands::REGISTR) {
+					_connectionsService.addResponse(fd,
+					 Message::toServerResponse("invalid arguments or this user already exists", FailType()));
+				} else if (clientRequest->getCommand() == Commands::LOGIN) {
+					_connectionsService.addResponse(fd,
+					 Message::toServerResponse("invalid arguments or this user already logged in", FailType()));
+				}
 			}
 			delete resp;
 		} else {
-			_connectionsService.addResponse(fd, "[SERVER] you need to /LOGIN or /REGISTER\n");
+			_connectionsService.addResponse(fd,
+			 Message::toServerResponse("you need to /LOGIN or /REGISTER", FailType()));
 		}
 		delete clientRequest;
 	} catch (std::exception &e) {
@@ -130,6 +136,16 @@ void		Server::clientReadEvent(int fd, std::string &rawRq) {
 		UID		uid = UID(atoll(_serverSettings->getPort().c_str()), _clientService.getUserId(fd), _clientService.getIdRequest(fd));
 		ClientRequest *clientRequest = _parser.generateClientRequest(rawRq, uid);
 		Response *response =_clientService.checkToExecute(clientRequest);
+		if (response->getCommandStatus() == Commands::SUCCESS) {
+			if (clientRequest->getCommand() == Commands::QUIT) {
+				disconnectEvent(fd);
+			} else if (clientRequest->getCommand() == Commands::KILL) {
+				disconnectEvent(atoll(response->getArguments()[0].c_str()));
+			} else if (clientRequest->getCommand() == Commands::OPER &&
+				 response->getArguments()[0] != _serverSettings->getPassword()) {
+				response->setStatus(Commands::FAIL);
+			}
+		}
 		_clientService.execute(response);
 		delete clientRequest;
 		delete response;
