@@ -6,7 +6,7 @@
 /*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 17:31:56 by root              #+#    #+#             */
-/*   Updated: 2022/01/20 15:15:51 by larlena          ###   ########.fr       */
+/*   Updated: 2022/01/22 14:02:10 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,10 @@ const std::string	Message::toServerResponse(const std::string &message, FailType
 	return ColorMessage::serverPrefixFail() + message + '\n';
 }
 
+const std::string	Message::toServerResponse(const std::string &message, ChannelType) {
+	return ColorMessage::serverPrefixChannel() + message + '\n';
+}
+
 const std::string		Message::toList(const std::vector<std::string> &args) {
 	std::vector<std::string>::const_iterator	it = args.begin();
 	std::string		dst;
@@ -85,7 +89,7 @@ const std::string		Message::toPrivateMessage(const std::vector<std::string> &arg
 	std::vector<std::string>::const_iterator	it = args.begin();
 	std::string		dst;
 
-	dst += '[' + ColorMessage::clientPrefix(*it++) + "] ";
+	dst += ColorMessage::privateMessagePrefix() + '[' + ColorMessage::clientPrefix(*it++) + "] ";
 	++it;
 	for (; it != args.end(); it++)
 		dst += *it + ' ';
@@ -102,7 +106,15 @@ const std::string	ColorMessage::serverPrefixFail() {
 	return "\033[48;5;52m[SERVER]\033[m ";
 }
 
-const std::string	ColorMessage::clientPrefix(std::string nickname) {
+const std::string	ColorMessage::serverPrefixChannel() {
+	return "\033[48;5;17m[SERVER]\033[m ";
+}
+
+const std::string	ColorMessage::privateMessagePrefix() {
+	return "\033[48;5;54m[PRIVMSG]\033[m ";
+}
+
+const std::string	ColorMessage::clientPrefix(const std::string &nickname) {
 	unsigned long	color = 0;
 
 	for (size_t i = 0; i < nickname.size(); i++)
@@ -110,12 +122,10 @@ const std::string	ColorMessage::clientPrefix(std::string nickname) {
 	color %= 229;
 	++color;
 
-	nickname.insert(0, "\033[38;5;" + ft::to_string(color) + 'm');
-	nickname.insert(nickname.size(), "\033[m");
-	return nickname;
+	return "\033[38;5;" + ft::to_string(color) + "m" + nickname + "\033[m";
 }
 
-const std::string	ColorMessage::channelPrefix(std::string channel) {
+const std::string	ColorMessage::channelPrefix(const std::string &channel) {
 	unsigned long	color = 0;
 
 	for (size_t i = 0; i < channel.size(); i++)
@@ -123,8 +133,6 @@ const std::string	ColorMessage::channelPrefix(std::string channel) {
 	color %= 229;
 	++color;
 
-	channel.insert(0, "\033[38;5;" + ft::to_string(color) + 'm');
-	channel.insert(channel.size(), "\033[m");
-	return channel;
+	return "\033[38;5;" + ft::to_string(color) + "m" + channel + "\033[m";
 }
 
