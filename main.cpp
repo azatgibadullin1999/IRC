@@ -2,7 +2,7 @@
 #include "Server/Settings/ServerSettings.hpp"
 
 int main(int ac, char **av) {
-ServerSettings *settings;
+	ServerSettings *settings;
 
 	if (ac == 3) {
 		try {
@@ -21,4 +21,5 @@ ServerSettings *settings;
 	} catch (std::exception &e) {
 		std::cout << e.what() << std::endl;
 	}
+	return 0;
 }
