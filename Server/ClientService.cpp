@@ -6,7 +6,7 @@
 /*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 14:24:58 by root              #+#    #+#             */
-/*   Updated: 2022/01/22 16:45:06 by larlena          ###   ########.fr       */
+/*   Updated: 2022/01/22 19:51:00 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@ ClientService::~ClientService() { }
 void	ClientService::registrClient(unsigned long socket, Response *response) {
 	if (response->getCommandStatus() == Commands::SUCCESS) {
 		_clients.push_back(Client(socket, response->getArguments()[0], response->getArguments()[1]));
-		__findeClient(socket, FindeSocket())->addResponse(ColorMessage::serverPrefixSuccess() + "you have successfully registered\n");
+		Client *cl = __findeClient(socket, FindeSocket()).base();
+		cl->addResponse(Message::toServerResponse("you have successfully registered", SuccessType()));
+		_methods.__sendChannelMessage(_clients, cl, "new client on server " + ColorMessage::clientPrefix(cl->getNickName()));
 	}
 }
 
@@ -34,15 +36,18 @@ void	ClientService::loginClient(unsigned long socket, Response *response) {
 		Client		*cl = __findeClient(response->getArguments()[0]).base();
 
 		cl->loginIn(socket);
-		cl->addResponse(ColorMessage::serverPrefixSuccess() + "you have successfully logged in\n");
+		cl->addResponse(Message::toServerResponse("you have successfully logged in", SuccessType()));
+		_methods.__sendChannelMessage(_clients, cl, ColorMessage::clientPrefix(cl->getNickName()) + " login on server");
 	}
 }
 
 void	ClientService::disconnectClient(unsigned long socket) {
 	Client	*cl = __findeClient(socket, FindeSocket()).base();
 
-	if (cl != _clients.end().base())
-		cl->loginOut();
+	if (cl == _clients.end().base())
+		return ;
+	cl->loginOut();
+	_methods.__sendChannelMessage(_clients, cl, ColorMessage::clientPrefix(cl->getNickName()) + " logout from server");
 }
 
 unsigned long	ClientService::getIdRequest(unsigned long socket) {
@@ -146,7 +151,7 @@ void	ClientService::Methods::privateMessage(
 					if (clientIt->isLogin())
 						clientIt->addResponse(Message::toPrivateMessage(response.getArguments()));
 					else 
-						srcClient->addResponse(Message::toServerResponse("User " + ColorMessage::clientPrefix(*dstClientIt) + " is ofline", FailType()));
+						srcClient->addResponse(Message::toServerResponse("User " + ColorMessage::clientPrefix(*dstClientIt) + " is offline", FailType()));
 					break ;
 				}
 			}
@@ -204,8 +209,13 @@ void	ClientService::Methods::nickName(
 		std::vector<Client>::iterator	it = clients.begin();
 
 		for (; it != clients.end(); it++) {
-			if (it->getNickName() == *(response.getArguments().begin())) {
+			if (it->getNickName() == *(response.getArguments().begin())
+			|| it->getLogin() == *(response.getArguments().begin())) {
 				cl->addResponse(Message::toServerResponse("user with the same nickname already exists", FailType()));
+				return ;
+			}
+			if (it->getChanel() == *(response.getArguments().begin())) {
+				cl->addResponse(Message::toServerResponse("you can't change the nickname that matches the channel name", FailType()));
 				return ;
 			}
 		}
@@ -224,25 +234,20 @@ void	ClientService::Methods::join(
 			cl->addResponse(Message::toServerResponse("few arguments", FailType()));
 			return ;
 		}
-		std::vector<Client>::iterator	dstClient1 = clients.begin();
-
-		for (; dstClient1 != clients.end(); dstClient1++) {
-			if (dstClient1.base() != cl
-			&& dstClient1->getChanel() == cl->getChanel()
-			&& dstClient1->isLogin())
-				dstClient1->addResponse(Message::toServerResponse(ColorMessage::clientPrefix(cl->getNickName()) + " leave from channel " + ColorMessage::channelPrefix(cl->getChanel()), ChannelType()));
+		std::vector<Client>::iterator		it = clients.begin();
+		for (; it != clients.end(); it++) {
+			if (response.getArguments()[0] == it->getNickName()
+			|| response.getArguments()[0] == it->getLogin()) {
+				cl->addResponse(Message::toServerResponse("you can't create a channel that matches a username", FailType()));
+				return ;
+			}
 		}
 
+		__sendChannelMessage(clients, cl, ColorMessage::clientPrefix(cl->getNickName()) + " leave from " + ColorMessage::channelPrefix(cl->getChanel()));
 		cl->setChanel(response.getArguments()[0]);
 		cl->addResponse(Message::toServerResponse("your channel has been changed to : " + ColorMessage::channelPrefix(cl->getChanel()), SuccessType()));
 		std::vector<Client>::iterator	dstClient2 = clients.begin();
-
-		for (; dstClient2 != clients.end(); dstClient2++) {
-			if (dstClient2.base() != cl
-			&& dstClient2->getChanel() == cl->getChanel()
-			&& dstClient2->isLogin())
-				dstClient2->addResponse(Message::toServerResponse(ColorMessage::clientPrefix(cl->getNickName()) + " join to channel " + ColorMessage::channelPrefix(cl->getChanel()), ChannelType()));
-		}
+		__sendChannelMessage(clients, cl, ColorMessage::clientPrefix(cl->getNickName()) + " joint to " + ColorMessage::channelPrefix(cl->getChanel()));
 	}
 
 void	ClientService::Methods::leave(
@@ -259,21 +264,10 @@ void	ClientService::Methods::leave(
 			cl->addResponse(Message::toServerResponse("you leave channel : " + cl->getChanel(), SuccessType()));
 			std::vector<Client>::iterator	dstClient1 = clients.begin();
 
-			for (; dstClient1 != clients.end(); dstClient1++) {
-				if (dstClient1.base() != cl
-				&& dstClient1->getChanel() == cl->getChanel()
-				&& dstClient1->isLogin())
-					dstClient1->addResponse(Message::toServerResponse(ColorMessage::clientPrefix(cl->getNickName()) + " leave from channel " + ColorMessage::channelPrefix(cl->getChanel()), ChannelType()));
-			}
+			__sendChannelMessage(clients, cl, ColorMessage::clientPrefix(cl->getNickName()) + " leave from " + ColorMessage::channelPrefix(cl->getChanel()));
 			cl->setChanel("Hub");
 			std::vector<Client>::iterator	dstClient2 = clients.begin();
-
-			for (; dstClient2 != clients.end(); dstClient2++) {
-				if (dstClient2.base() != cl
-				&& dstClient2->getChanel() == cl->getChanel()
-				&& dstClient2->isLogin())
-					dstClient2->addResponse(Message::toServerResponse(ColorMessage::clientPrefix(cl->getNickName()) + " join to channel " + ColorMessage::channelPrefix(cl->getChanel()), ChannelType()));
-			}
+			__sendChannelMessage(clients, cl, ColorMessage::clientPrefix(cl->getNickName()) + " join to " + ColorMessage::channelPrefix(cl->getChanel()));
 		}
 	}
 
@@ -399,7 +393,7 @@ void	ClientService::Methods::kick(
 			return ;
 		}
 		if (!it->isLogin()) {
-			oper->addResponse(Message::toServerResponse("client is ofline", FailType()));
+			oper->addResponse(Message::toServerResponse("client is offline", FailType()));
 			return ;
 		}
 		if (it->getChanel() != oper->getChanel()) {
@@ -411,41 +405,14 @@ void	ClientService::Methods::kick(
 			return ;
 		}
 		it->addResponse(Message::toServerResponse("you kicked from : " + ColorMessage::channelPrefix(it->getChanel()), FailType()));
-		oper->addResponse(Message::toServerResponse("you kick " + ColorMessage::clientPrefix(it->getNickName()) + " from " + ColorMessage::channelPrefix(it->getChanel()), SuccessType()));
+		__sendChannelMessage(clients, it.base(), ColorMessage::clientPrefix(it->getNickName()) + " kicked from channel");
 		it->setChanel("Hub");
+		__sendChannelMessage(clients, it.base(), ColorMessage::clientPrefix(it->getNickName()) + " join to " + ColorMessage::channelPrefix(it->getChanel()));
 	}
 
 void	ClientService::Methods::kill(
 	std::vector<Client> &clients,
-	const Response &response) {
-		Client	*oper = __findeClient(clients, response.getUID());
-
-		if (oper == clients.end().base())
-			return ;
-		if (!oper->isPrivileged()) {
-			oper->addResponse(Message::toServerResponse("you are not operator", FailType()));
-			return ;
-		}
-		if (response.getArguments().size() == 0) {
-			oper->addResponse(Message::toServerResponse("few arguments", FailType()));
-			return ;
-		}
-
-		std::vector<Client>::iterator	it = clients.begin();
-
-		for (; it != clients.end() && it->getNickName() != response.getArguments()[0]; it++) { }
-		
-		if (it == clients.end()) {
-			oper->addResponse(Message::toServerResponse("client don't found on server", FailType()));
-			return ;
-		}
-		if (it->isPrivileged()) {
-			oper->addResponse(Message::toServerResponse("you can't kill other operator", FailType()));
-			return ;
-		}
-		oper->addResponse(Message::toServerResponse("client deleted from server", SuccessType()));
-		it->loginOut();
-	}
+	const Response &response) { }
 
 void	ClientService::Methods::die(
 	std::vector<Client> &clients,
@@ -598,6 +565,7 @@ Commands::Status	ClientService::Methods::checkHelp(
 	ClientRequest *request,
 	std::vector<std::string> &responseArgs) {
 		responseArgs.push_back("/PRIVMSG - sending a private message. Example \"/PRIVMSG <UserNickName> <any message>\" ");
+		responseArgs.push_back("/NOTICE - sending a privat message, but without error response");
 		responseArgs.push_back("/NICK - change of nickname. Example \"/NICK <__xXx_PeNiS_DeTrOv_xXx__>\" ");
 		responseArgs.push_back("/JOIN - change of channel. Example \"/JOIN <any_channel>\" ");
 		responseArgs.push_back("/LEAVE - leave channel");
@@ -630,7 +598,8 @@ Commands::Status	ClientService::Methods::checkRegister(
 
 		for (; it != clients.end(); it++) { 
 			if (request->getArguments()[0] == it->getLogin()
-				|| request->getArguments()[0] == it->getNickName())
+				|| request->getArguments()[0] == it->getNickName()
+				|| request->getArguments()[0] == it->getChanel())
 				return Commands::FAIL;
 		}
 
@@ -688,9 +657,35 @@ Commands::Status	ClientService::Methods::checkKill(
 	std::vector<Client> &clients,
 	ClientRequest *request,
 	std::vector<std::string> &responseArgs) {
-		responseArgs = request->getArguments();
-		if (responseArgs.size() < 1)
+		Client	*oper = __findeClient(clients, request->getUID());
+
+		if (oper == clients.end().base())
 			return Commands::FAIL;
+		if (!oper->isPrivileged()) {
+			oper->addResponse(Message::toServerResponse("you are not operator", FailType()));
+			return Commands::FAIL;
+		}
+		if (request->getArguments().size() == 0) {
+			oper->addResponse(Message::toServerResponse("few arguments", FailType()));
+			return Commands::FAIL;
+		}
+
+		std::vector<Client>::iterator	it = clients.begin();
+
+		for (; it != clients.end() && it->getNickName() != request->getArguments()[0]; it++) { }
+		
+		if (it == clients.end()) {
+			oper->addResponse(Message::toServerResponse("client don't found on server", FailType()));
+			return Commands::FAIL;
+		}
+		if (it->isPrivileged()) {
+			oper->addResponse(Message::toServerResponse("you can't kill other operator", FailType()));
+			return Commands::FAIL;
+		}
+		oper->addResponse(Message::toServerResponse(ColorMessage::clientPrefix(it->getNickName()) + " deleted from server", SuccessType()));
+		responseArgs.push_back(ft::to_string(it->getSocket()));
+		it->loginOut();
+		__sendChannelMessage(clients, it.base(), ColorMessage::clientPrefix(it->getNickName()) + " deleted from server");
 		return Commands::SUCCESS;
 	}
 
@@ -707,6 +702,17 @@ Commands::Status	ClientService::Methods::checkDie(
 	//	METHODS UTILS
 	//
 
+
+void		ClientService::Methods::__sendChannelMessage(std::vector<Client> &clients, Client *srcClient, const std::string &message) {
+	std::vector<Client>::iterator	dstClient1 = clients.begin();
+
+	for (; dstClient1 != clients.end(); dstClient1++) {
+		if (dstClient1.base() != srcClient
+		&& dstClient1->getChanel() == srcClient->getChanel()
+		&& dstClient1->isLogin())
+			dstClient1->addResponse(Message::toServerResponse(message, ChannelType()));
+	}
+}
 
 void		ClientService::Methods::__parsPrivMessageArgument(std::vector<std::string> &dst, const std::string &usrs) {
 		std::string::const_iterator		it2 = usrs.begin();

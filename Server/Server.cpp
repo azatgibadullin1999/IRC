@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hapryl <hapryl@student.42.fr>              +#+  +:+       +#+        */
+/*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/04 17:08:52 by zera              #+#    #+#             */
-/*   Updated: 2022/01/22 16:20:46 by hapryl           ###   ########.fr       */
+/*   Updated: 2022/01/22 18:10:41 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ void		Server::clientReadEvent(int fd, std::string &rawRq) {
 			if (clientRequest->getCommand() == Commands::QUIT) {
 				disconnectEvent(fd);
 			} else if (clientRequest->getCommand() == Commands::KILL) {
+				std::cout << response->getArguments()[0] << std::endl;
 				disconnectEvent(atoll(response->getArguments()[0].c_str()));
 			} else if (clientRequest->getCommand() == Commands::OPER &&
 				 response->getArguments()[0] != _serverSettings->getPassword()) {
