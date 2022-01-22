@@ -6,7 +6,7 @@
 /*   By: larlena <larlena@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 19:16:51 by zera              #+#    #+#             */
-/*   Updated: 2022/01/22 16:13:29 by larlena          ###   ########.fr       */
+/*   Updated: 2022/01/22 17:47:57 by larlena          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ class ClientService
 				Commands::Status	checkKill(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 				Commands::Status	checkDie(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
 
-				Commands::Status	emptyFunc(std::vector<Client> &clients, ClientRequest *request, std::vector<std::string> &responseArgs) ;
+				void			__sendChannelMessage(std::vector<Client> &clients, Client *srcClient, const std::string &message);
 
 			private :
 					//	Utils
